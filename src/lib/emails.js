@@ -4,7 +4,7 @@ import _ from 'lodash';
 export default {
   send: function(emails, template, params) {
     apostle.domainKey = process.env.APOSTLE_DOMAINKEY;
-    emails = _.flattenDeep([emails]);
+    emails = _.compact(_.flattenDeep([emails]));
 
     let queue = apostle.createQueue();
     _.each(emails, (email) => {
@@ -14,4 +14,4 @@ export default {
 
     queue.deliver();
   }
-}
+};

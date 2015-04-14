@@ -17,7 +17,7 @@ var _import2 = _interopRequireWildcard(_import);
 exports['default'] = {
   send: function send(emails, template, params) {
     _apostle2['default'].domainKey = process.env.APOSTLE_DOMAINKEY;
-    emails = _import2['default'].flattenDeep([emails]);
+    emails = _import2['default'].compact(_import2['default'].flattenDeep([emails]));
 
     var queue = _apostle2['default'].createQueue();
     _import2['default'].each(emails, function (email) {
