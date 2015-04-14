@@ -7,18 +7,24 @@
   "version": "0.0.1",
   "main": "build/app.js",
   "dependencies": {
+    "apostle.io": "^1.0.0",
     "babel": "^5.0.12",
     "co": "^4.5.1",
-    "co-monk": "^1.0.0",
+    "dotenv": "^1.1.0",
+    "es6-promisify": "^1.1.1",
+    "keen.io": "^0.1.3",
     "kue": "~0.8.12",
     "lodash": "^3.6.0",
     "meteor-random": "0.0.3",
+    "moment": "^2.10.2",
     "mongodb": "^1.4.35",
+    "mongoose": "^4.0.1",
     "mongoskin": "^1.4.13",
-    "monk": "^1.0.1",
+    "promisify-node": "^0.1.5",
     "stampit": "^1.1.0"
   },
   "devDependencies": {
+    "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.0.0",
     "gulp-nodemon": "^2.0.2"
