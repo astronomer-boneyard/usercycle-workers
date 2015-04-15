@@ -6,6 +6,10 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _import = require('lodash');
+
+var _import2 = _interopRequireWildcard(_import);
+
 var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireWildcard(_mongoose);
@@ -23,10 +27,6 @@ var _moment2 = _interopRequireWildcard(_moment);
 var _co = require('co');
 
 var _co2 = _interopRequireWildcard(_co);
-
-var _import = require('lodash');
-
-var _import2 = _interopRequireWildcard(_import);
 
 var schema = new _mongoose2['default'].Schema({
   _id: String,
@@ -100,19 +100,27 @@ var instanceMethods = {
   }),
 
   firstEndEvent: regeneratorRuntime.mark(function firstEndEvent() {
-    var min;
+    var queries, min;
     return regeneratorRuntime.wrap(function firstEndEvent$(context$1$0) {
       var _this = this;
 
       while (1) switch (context$1$0.prev = context$1$0.next) {
         case 0:
-          min = _moment2['default'].min(_import2['default'].map(this.end.events, function (ev) {
-            var ts = _this.firstTimestamp(ev.event);
+          queries = _import2['default'].map(this.end.events, function (ev) {
+            return _this.firstTimestamp(ev.event);
+          });
+          context$1$0.next = 3;
+          return queries;
+
+        case 3:
+          context$1$0.t0 = context$1$0.sent;
+          context$1$0.t1 = _import2['default'].map(context$1$0.t0, function (ts) {
             return _moment2['default'].utc(ts);
-          }));
+          });
+          min = _moment2['default'].min(context$1$0.t1);
           return context$1$0.abrupt('return', min.format());
 
-        case 2:
+        case 7:
         case 'end':
           return context$1$0.stop();
       }
@@ -120,22 +128,39 @@ var instanceMethods = {
   }),
 
   firstStartEventForInterval: regeneratorRuntime.mark(function firstStartEventForInterval(interval) {
-    var ts;
     return regeneratorRuntime.wrap(function firstStartEventForInterval$(context$1$0) {
       while (1) switch (context$1$0.prev = context$1$0.next) {
         case 0:
           context$1$0.next = 2;
-          return this.firstTimestamp(this.start.event);
+          return this.firstStartEvent();
 
         case 2:
-          ts = context$1$0.sent;
-          return context$1$0.abrupt('return', _moment2['default'].utc(ts).startOf(interval));
+          context$1$0.t2 = context$1$0.sent;
+          return context$1$0.abrupt('return', _moment2['default'].utc(context$1$0.t2).startOf(interval));
 
         case 4:
         case 'end':
           return context$1$0.stop();
       }
     }, firstStartEventForInterval, this);
+  }),
+
+  firstEndEventForInterval: regeneratorRuntime.mark(function firstEndEventForInterval(interval) {
+    return regeneratorRuntime.wrap(function firstEndEventForInterval$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          context$1$0.next = 2;
+          return this.firstEndEvent();
+
+        case 2:
+          context$1$0.t3 = context$1$0.sent;
+          return context$1$0.abrupt('return', _moment2['default'].utc(context$1$0.t3).startOf(interval));
+
+        case 4:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, firstEndEventForInterval, this);
   })
 };
 

@@ -6,9 +6,9 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _co = require('co');
+var _import = require('lodash');
 
-var _co2 = _interopRequireWildcard(_co);
+var _import2 = _interopRequireWildcard(_import);
 
 var _stampit = require('stampit');
 
@@ -18,33 +18,29 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireWildcard(_moment);
 
-var _util = require('../util');
+var _util = require('../../lib/util');
 
 var _util2 = _interopRequireWildcard(_util);
 
-var _emails = require('../lib/emails');
+var _emails = require('../../lib/emails');
 
 var _emails2 = _interopRequireWildcard(_emails);
 
-var _View = require('../models/view');
+var _View = require('../../models/view');
 
 var _View2 = _interopRequireWildcard(_View);
 
-var _Project = require('../models/project');
+var _Project = require('../../models/project');
 
 var _Project2 = _interopRequireWildcard(_Project);
 
-var _Retention = require('../models/retention');
+var _Retention = require('../../models/retention');
 
 var _Retention2 = _interopRequireWildcard(_Retention);
 
-var _User = require('../models/user');
+var _User = require('../../models/user');
 
 var _User2 = _interopRequireWildcard(_User);
-
-var _import = require('lodash');
-
-var _import2 = _interopRequireWildcard(_import);
 
 exports['default'] = _stampit2['default']().enclose(function () {
 
@@ -355,11 +351,15 @@ exports['default'] = _stampit2['default']().enclose(function () {
           return bundle;
 
         case 15:
-          context$2$0.t0 = context$2$0.sent;
+          context$2$0.t4 = context$2$0.sent;
           context$2$0.next = 18;
-          return sendEmails(view, project, context$2$0.t0);
+          return sendEmails(view, project, context$2$0.t4);
 
         case 18:
+
+          done();
+
+        case 19:
         case 'end':
           return context$2$0.stop();
       }

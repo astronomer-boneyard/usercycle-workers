@@ -6,13 +6,13 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _apostle = require('apostle.io');
-
-var _apostle2 = _interopRequireWildcard(_apostle);
-
 var _import = require('lodash');
 
 var _import2 = _interopRequireWildcard(_import);
+
+var _apostle = require('apostle.io');
+
+var _apostle2 = _interopRequireWildcard(_apostle);
 
 exports['default'] = {
   send: function send(emails, template, params) {

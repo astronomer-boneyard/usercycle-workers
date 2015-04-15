@@ -15,12 +15,12 @@ gulp.task('babel', function () {
     .pipe(gulp.dest(DIST));
 });
 
-gulp.task('nodemon', function () {
+gulp.task('default', ['clean', 'babel'], function() {
   nodemon({
     script: DIST + '/app.js',
     ext: 'js',
     ignore: [DIST + '/*'],
-    tasks: ['babel'],
+    tasks: ['clean', 'babel'],
     env: {
       'NODE_ENV': 'development'
     }
@@ -28,5 +28,3 @@ gulp.task('nodemon', function () {
     console.log('Retarted server...');
   });
 });
-
-gulp.task('default', ['babel', 'nodemon']);

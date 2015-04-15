@@ -1,7 +1,7 @@
+import _ from 'lodash';
 import stampit from 'stampit';
 import keen from 'keen.io';
 import promisify from 'promisify-node';
-import _ from 'lodash';
 
 let stamp = stampit().enclose(function() {
 

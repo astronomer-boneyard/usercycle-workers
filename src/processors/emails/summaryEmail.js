@@ -1,13 +1,12 @@
-import co from 'co';
+import _ from 'lodash';
 import stampit from 'stampit';
 import moment from 'moment';
-import util from '../util';
-import emails from '../lib/emails';
-import View from '../models/view';
-import Project from '../models/project';
-import Retention from '../models/retention';
-import User from '../models/user';
-import _ from 'lodash';
+import util from '../../lib/util';
+import emails from '../../lib/emails';
+import View from '../../models/view';
+import Project from '../../models/project';
+import Retention from '../../models/retention';
+import User from '../../models/user';
 
 export default stampit().enclose(function(){
 
@@ -207,6 +206,8 @@ export default stampit().enclose(function(){
     });
 
     yield sendEmails(view, project, yield bundle);
+
+    done();
   };
 
 });

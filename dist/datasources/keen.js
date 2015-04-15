@@ -6,6 +6,10 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _import = require('lodash');
+
+var _import2 = _interopRequireWildcard(_import);
+
 var _stampit = require('stampit');
 
 var _stampit2 = _interopRequireWildcard(_stampit);
@@ -17,10 +21,6 @@ var _keen2 = _interopRequireWildcard(_keen);
 var _promisify = require('promisify-node');
 
 var _promisify2 = _interopRequireWildcard(_promisify);
-
-var _import = require('lodash');
-
-var _import2 = _interopRequireWildcard(_import);
 
 var stamp = _stampit2['default']().enclose(function () {
 

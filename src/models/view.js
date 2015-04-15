@@ -1,9 +1,9 @@
+import _ from 'lodash';
 import mongoose from 'mongoose';
 import {QueryRunner, Keen} from '../datasources/keen';
 import promisify from 'promisify-node';
 import moment from 'moment';
 import co from 'co';
-import _ from 'lodash';
 
 let schema = new mongoose.Schema({
   _id: String,
@@ -36,16 +36,17 @@ let instanceMethods = {
   },
 
   firstEndEvent: function* () {
-    let min = moment.min(_.map(this.end.events, (ev) => {
-      let ts = this.firstTimestamp(ev.event);
-      return moment.utc(ts);
-    }));
+    let queries = _.map(this.end.events, (ev) => { return this.firstTimestamp(ev.event); });
+    let min = moment.min(_.map(yield queries, (ts) => { return moment.utc(ts); }));
     return min.format();
   },
 
   firstStartEventForInterval: function* (interval) {
-    let ts = yield this.firstTimestamp(this.start.event);
-    return moment.utc(ts).startOf(interval);
+    return moment.utc(yield this.firstStartEvent()).startOf(interval);
+  },
+
+  firstEndEventForInterval: function* (interval) {
+    return moment.utc(yield this.firstEndEvent()).startOf(interval);
   }
 };
 

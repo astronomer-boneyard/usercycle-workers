@@ -1,5 +1,5 @@
-import apostle from 'apostle.io';
 import _ from 'lodash';
+import apostle from 'apostle.io';
 
 export default {
   send: function(emails, template, params) {
