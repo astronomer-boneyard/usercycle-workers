@@ -29,10 +29,10 @@ export default stampit().enclose(function() {
     let {viewId, cohortInterval} = job.data;
 
     let view = yield View.findOne({_id: viewId}).exec();
-    if (!view) return;
+    if (!view) done(new Error('View does not exist'));
 
     let project = yield view.project();
-    if (!project) return;
+    if (!project) done(new Error('Project does not exist'));
 
     console.log(`Building ${cohortInterval} queries for ${project.name}`);
 

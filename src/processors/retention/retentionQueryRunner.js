@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import stampit from 'stampit';
+import funnelQueryRunner from '../lib/funnelQueryRunner';
 
 let retentionQueryRunner = stampit().enclose(function() {
 
-  this.process = function* (job, done) {
-    console.log('QueryRUNNER!!!!!!!!!!!!');
-    done();
-  }
+
+
 });
 
-export default stampit.compose(retentionQueryRunner);
+export default stampit.compose(funnelQueryRunner, retentionQueryRunner);

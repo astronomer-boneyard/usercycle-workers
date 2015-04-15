@@ -29,7 +29,7 @@ let retentionQueryBuilder = stampit().enclose(function() {
     queue.create('retentionQueryRunner', {
       viewId: 'j74dvzrWjf5qm3tSH',
       cohortInterval: 'day',
-      query: steps
+      steps
     }).removeOnComplete(true).save();
 
   }

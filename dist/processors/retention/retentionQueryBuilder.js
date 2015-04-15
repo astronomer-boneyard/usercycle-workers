@@ -51,7 +51,7 @@ var retentionQueryBuilder = _stampit2['default']().enclose(function () {
     _queue2['default'].create('retentionQueryRunner', {
       viewId: 'j74dvzrWjf5qm3tSH',
       cohortInterval: 'day',
-      query: steps
+      steps: steps
     }).removeOnComplete(true).save();
   };
 });

@@ -63,42 +63,29 @@ exports['default'] = _stampit2['default']().enclose(function () {
         case 5:
           view = context$2$0.sent;
 
-          if (view) {
-            context$2$0.next = 8;
-            break;
-          }
+          if (!view) done(new Error('View does not exist'));
 
-          return context$2$0.abrupt('return');
-
-        case 8:
-          context$2$0.next = 10;
+          context$2$0.next = 9;
           return view.project();
 
-        case 10:
+        case 9:
           project = context$2$0.sent;
 
-          if (project) {
-            context$2$0.next = 13;
-            break;
-          }
-
-          return context$2$0.abrupt('return');
-
-        case 13:
+          if (!project) done(new Error('Project does not exist'));
 
           console.log('Building ' + cohortInterval + ' queries for ' + project.name);
 
-          context$2$0.next = 16;
+          context$2$0.next = 14;
           return view.firstStartEventForInterval(cohortInterval);
 
-        case 16:
+        case 14:
           firstStartEvent = context$2$0.sent;
           totalIntervalsSinceSignup = _moment2['default'].utc().diff(firstStartEvent, '' + cohortInterval + 's');
           minTotalIntervalsSinceSignup = Math.min(totalIntervalsSinceSignup, _util2['default'].MAX_COHORTS_PER_INTERVAL);
-          context$2$0.next = 21;
+          context$2$0.next = 19;
           return view.firstEndEventForInterval(cohortInterval);
 
-        case 21:
+        case 19:
           firstEndEvent = context$2$0.sent;
           totalIntervalsSinceRetention = _moment2['default'].utc().diff(firstEndEvent, '' + cohortInterval + 's');
           minTotalPeriodsSinceRetention = Math.min(totalIntervalsSinceRetention, _util2['default'].MAX_COHORTS_PER_INTERVAL);
@@ -122,7 +109,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
 
           done();
 
-        case 27:
+        case 25:
         case 'end':
           return context$2$0.stop();
       }

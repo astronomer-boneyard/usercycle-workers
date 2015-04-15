@@ -14,22 +14,11 @@ var _stampit = require('stampit');
 
 var _stampit2 = _interopRequireWildcard(_stampit);
 
-var retentionQueryRunner = _stampit2['default']().enclose(function () {
+var _funnelQueryRunner = require('../lib/funnelQueryRunner');
 
-  this.process = regeneratorRuntime.mark(function callee$1$0(job, done) {
-    return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
-      while (1) switch (context$2$0.prev = context$2$0.next) {
-        case 0:
-          console.log('QueryRUNNER!!!!!!!!!!!!');
-          done();
+var _funnelQueryRunner2 = _interopRequireWildcard(_funnelQueryRunner);
 
-        case 2:
-        case 'end':
-          return context$2$0.stop();
-      }
-    }, callee$1$0, this);
-  });
-});
+var retentionQueryRunner = _stampit2['default']().enclose(function () {});
 
-exports['default'] = _stampit2['default'].compose(retentionQueryRunner);
+exports['default'] = _stampit2['default'].compose(_funnelQueryRunner2['default'], retentionQueryRunner);
 module.exports = exports['default'];
