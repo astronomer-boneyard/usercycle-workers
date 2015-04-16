@@ -167,7 +167,7 @@ export default stampit().enclose(function(){
   };
 
 
-  let sendEmails = function* (view, project, bundle) {
+  let sendEmails = function* (view, bundle) {
     let intervals = _.filter(util.INTERVALS, (i) => {
       return isStartOf(i);
     });
@@ -179,35 +179,34 @@ export default stampit().enclose(function(){
     let users = yield User.find({ _id: { $in: userIds } }).select('emails.address').exec();
     let addresses = mapEmails(users);
 
-    if (project.isUsercycle) {
+    if (view.project.isUsercycle) {
       let demoUsers = yield User.find({ 'profile.demoEmail': { $in: intervals } }).exec();
       let demoEmails = mapEmails(demoUsers);
       addresses = addresses.concat(demoEmails);
     }
 
     emails.send(addresses, 'daily', bundle);
-    console.log(`Summary emails sent for ${project.name}`);
+    console.log(`Summary emails sent for ${view.project.name}`);
   };
 
 
-  this.process = function* (job, done) {
-    let view = yield View.findOne({_id: job.data.viewId}).exec();
-    if (!view) return;
+  this.process = function* () {
+    let {viewId} = this.job.data;
 
-    let project = yield view.project();
-    if (!project) return;
+    let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
+    if (!view) this.done(new Error('View does not exist'));
 
-    console.log(`Creating summary email for ${project.name}`);
+    console.log(`Creating summary email for ${view.project.name}`);
 
-    let bundle = { projectName: project.name };
+    let bundle = { projectName: view.project.name };
 
     util.INTERVALS.forEach((interval) => {
       bundle[interval] = generateDataForInterval(view, interval);
     });
 
-    yield sendEmails(view, project, yield bundle);
+    yield sendEmails(view, yield bundle);
 
-    done();
+    this.done();
   };
 
 });

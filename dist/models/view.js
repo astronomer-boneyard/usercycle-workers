@@ -31,42 +31,32 @@ var _co2 = _interopRequireWildcard(_co);
 var schema = new _mongoose2['default'].Schema({
   _id: String,
   name: String,
-  projectId: String,
+  project: { type: String, ref: 'Project' },
   start: {},
   end: {},
-  emails: []
-});
+  emails: [] });
 
 var instanceMethods = {
-  project: regeneratorRuntime.mark(function project() {
-    return regeneratorRuntime.wrap(function project$(context$1$0) {
-      while (1) switch (context$1$0.prev = context$1$0.next) {
-        case 0:
-          return context$1$0.abrupt('return', this.model('Project').findOne({ _id: this.projectId }).exec());
-
-        case 1:
-        case 'end':
-          return context$1$0.stop();
-      }
-    }, project, this);
-  }),
-
   firstTimestamp: regeneratorRuntime.mark(function firstTimestamp(collection) {
-    var project, min, response;
+    var min, response;
     return regeneratorRuntime.wrap(function firstTimestamp$(context$1$0) {
       while (1) switch (context$1$0.prev = context$1$0.next) {
         case 0:
-          context$1$0.next = 2;
-          return this.project();
+          if (this.populated('project')) {
+            context$1$0.next = 3;
+            break;
+          }
 
-        case 2:
-          project = context$1$0.sent;
+          context$1$0.next = 3;
+          return this.populate('project').execPopulate();
+
+        case 3:
           min = new _QueryRunner$Keen.Keen.Query('minimum', {
             event_collection: collection,
             target_property: 'keen.timestamp'
           });
           context$1$0.next = 6;
-          return _QueryRunner$Keen.QueryRunner.run(project, min);
+          return _QueryRunner$Keen.QueryRunner.run(this.project, min);
 
         case 6:
           response = context$1$0.sent;

@@ -28,7 +28,7 @@ var _funnelQueryBuilder2 = _interopRequireWildcard(_funnelQueryBuilder);
 
 var retentionQueryBuilder = _stampit2['default']().enclose(function () {
 
-  this.pushQuery = function (view, cohortStart, cohortEnd, queryStart, queryEnd) {
+  this.pushQuery = function (view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     var steps = [];
 
     steps.push({
@@ -49,8 +49,8 @@ var retentionQueryBuilder = _stampit2['default']().enclose(function () {
     });
 
     _queue2['default'].create('retentionQueryRunner', {
-      viewId: 'j74dvzrWjf5qm3tSH',
-      cohortInterval: 'day',
+      viewId: view._id,
+      cohortInterval: cohortInterval,
       steps: steps
     }).removeOnComplete(true).save();
   };

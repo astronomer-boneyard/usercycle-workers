@@ -6,7 +6,7 @@ import funnelQueryBuilder from '../lib/funnelQueryBuilder';
 
 let retentionQueryBuilder = stampit().enclose(function() {
 
-  this.pushQuery = function(view, cohortStart, cohortEnd, queryStart, queryEnd) {
+  this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     let steps = [];
 
     steps.push({
@@ -27,8 +27,8 @@ let retentionQueryBuilder = stampit().enclose(function() {
     });
 
     queue.create('retentionQueryRunner', {
-      viewId: 'j74dvzrWjf5qm3tSH',
-      cohortInterval: 'day',
+      viewId: view._id,
+      cohortInterval,
       steps
     }).removeOnComplete(true).save();
 

@@ -7,7 +7,6 @@ import 'babel/polyfill';
 
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import queue from './lib/queue';
 import * as processors from './processors/index';
 
 // Load environment variables into process.env from .env file
@@ -21,7 +20,7 @@ db.on('error', () => {
 });
 db.once('open', () => {
   console.log('Successfully connected to mongo, starting processors.');
-  processors.start(queue);
+  processors.start();
 });
 
 // Cleanup just in case
@@ -29,16 +28,3 @@ process.once('SIGTERM', function(sig) {
   db.close();
   server.close();
 });
-
-
-// TESTING -----------------------------------------------------
-console.log('Pushing test jobs...');
-
-// let job = queue.create('summaryEmail', {
-//   viewId: 'j74dvzrWjf5qm3tSH'
-// }).removeOnComplete(true).save();
-
-let job = queue.create('retentionQueryBuilder', {
-  viewId: 'j74dvzrWjf5qm3tSH',
-  cohortInterval: 'day'
-}).removeOnComplete(true).save();

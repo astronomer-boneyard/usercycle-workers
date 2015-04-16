@@ -6,19 +6,21 @@ import Project from '../../models/project';
 
 export default stampit().enclose(function() {
 
-  this.process = function* (job, done) {
-    let {viewId, cohortInterval, steps} = job.data;
+  this.handleResponse = function(response) {
+    throw new Error('handleResponse not implemented!');
+  }
 
-    let view = yield View.findOne({_id: viewId}).exec();
-    if (!view) done(new Error('View does not exist'));
+  this.process = function* () {
+    let {viewId, cohortInterval, steps} = this.job.data;
 
-    let project = yield view.project();
-    if (!project) done(new Error('Project does not exist'));
+    let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
+    if (!view) this.done(new Error('View does not exist'));
 
-    console.log(`Running ${cohortInterval} queries for ${project.name}`);
+    console.log(`Running ${cohortInterval} queries for ${view.project.name}`);
 
     let query = new Keen.Query('funnel', {steps});
-    console.log(query.params);
-    done();
+    let response = yield QueryRunner.run(view.project, query);
+    yield this.handleResponse(response);
+    this.done();
   }
 });

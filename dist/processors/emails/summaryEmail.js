@@ -261,7 +261,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
     });
   };
 
-  var sendEmails = regeneratorRuntime.mark(function sendEmails(view, project, bundle) {
+  var sendEmails = regeneratorRuntime.mark(function sendEmails(view, bundle) {
     var intervals, userIds, users, addresses, demoUsers, demoEmails;
     return regeneratorRuntime.wrap(function sendEmails$(context$2$0) {
       while (1) switch (context$2$0.prev = context$2$0.next) {
@@ -279,7 +279,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
           users = context$2$0.sent;
           addresses = mapEmails(users);
 
-          if (!project.isUsercycle) {
+          if (!view.project.isUsercycle) {
             context$2$0.next = 12;
             break;
           }
@@ -296,7 +296,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
         case 12:
 
           _emails2['default'].send(addresses, 'daily', bundle);
-          console.log('Summary emails sent for ' + project.name);
+          console.log('Summary emails sent for ' + view.project.name);
 
         case 14:
         case 'end':
@@ -305,61 +305,41 @@ exports['default'] = _stampit2['default']().enclose(function () {
     }, sendEmails, this);
   });
 
-  this.process = regeneratorRuntime.mark(function callee$1$0(job, done) {
-    var view, project, bundle;
+  this.process = regeneratorRuntime.mark(function callee$1$0() {
+    var viewId, view, bundle;
     return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
       while (1) switch (context$2$0.prev = context$2$0.next) {
         case 0:
-          context$2$0.next = 2;
-          return _View2['default'].findOne({ _id: job.data.viewId }).exec();
+          viewId = this.job.data.viewId;
+          context$2$0.next = 3;
+          return _View2['default'].findOne({ _id: viewId }).populate({ path: 'project' }).exec();
 
-        case 2:
+        case 3:
           view = context$2$0.sent;
 
-          if (view) {
-            context$2$0.next = 5;
-            break;
-          }
+          if (!view) this.done(new Error('View does not exist'));
 
-          return context$2$0.abrupt('return');
+          console.log('Creating summary email for ' + view.project.name);
 
-        case 5:
-          context$2$0.next = 7;
-          return view.project();
-
-        case 7:
-          project = context$2$0.sent;
-
-          if (project) {
-            context$2$0.next = 10;
-            break;
-          }
-
-          return context$2$0.abrupt('return');
-
-        case 10:
-
-          console.log('Creating summary email for ' + project.name);
-
-          bundle = { projectName: project.name };
+          bundle = { projectName: view.project.name };
 
           _util2['default'].INTERVALS.forEach(function (interval) {
             bundle[interval] = generateDataForInterval(view, interval);
           });
 
-          context$2$0.next = 15;
+          context$2$0.next = 10;
           return bundle;
 
-        case 15:
+        case 10:
           context$2$0.t4 = context$2$0.sent;
-          context$2$0.next = 18;
-          return sendEmails(view, project, context$2$0.t4);
+          context$2$0.next = 13;
+          return sendEmails(view, context$2$0.t4);
 
-        case 18:
+        case 13:
 
-          done();
+          this.done();
 
-        case 19:
+        case 14:
         case 'end':
           return context$2$0.stop();
       }

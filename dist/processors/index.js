@@ -15,6 +15,10 @@ var _co = require('co');
 
 var _co2 = _interopRequireWildcard(_co);
 
+var _queue = require('../lib/queue');
+
+var _queue2 = _interopRequireWildcard(_queue);
+
 var _summaryEmail = require('./emails/summaryEmail');
 
 var _summaryEmail2 = _interopRequireWildcard(_summaryEmail);
@@ -32,7 +36,7 @@ function createHandler(factory) {
   // It is in charge of creating a new handler and passing the job
   return function (job, done) {
     // Produce a new instance from factory
-    var processor = factory.create();
+    var processor = factory.create({ job: job, done: done });
 
     // Turn handlers generator process function into a regular
     // function that returns a promise
@@ -43,15 +47,31 @@ function createHandler(factory) {
     var bound = _import2['default'].bind(wrapped, processor);
 
     // Call our wrapped and bound function and return a promise
-    bound(job, done)['catch'](function (error) {
+    bound()['catch'](function (error) {
       console.error('An error occured processing a job:\n', error.stack);
+      done(new Error('' + error.name + ' - ' + error.message));
     });
   };
 }
 
+function startProcessing(type, handler) {
+  _queue2['default'].process(type, 5, handler);
+}
+
 function start(queue) {
   // Setup kue processors
-  queue.process('summaryEmail', createHandler(_summaryEmail2['default']));
-  queue.process('retentionQueryBuilder', createHandler(_retentionQueryBuilder2['default']));
-  queue.process('retentionQueryRunner', createHandler(_retentionQueryRunner2['default']));
+  startProcessing('summaryEmail', createHandler(_summaryEmail2['default']));
+  startProcessing('retentionQueryBuilder', createHandler(_retentionQueryBuilder2['default']));
+  startProcessing('retentionQueryRunner', createHandler(_retentionQueryRunner2['default']));
 }
+
+// TESTING ---------------------------------------------------------------------
+console.log('Pushing test jobs...');
+
+// let job = queue.create('summaryEmail', {
+//   viewId: 'j74dvzrWjf5qm3tSH'
+// }).removeOnComplete(true).save();
+//
+var job = _queue2['default'].create('retentionQueryBuilder', {
+  viewId: 'fzGirKkNGLKpaBmZT'
+}).removeOnComplete(true).save();

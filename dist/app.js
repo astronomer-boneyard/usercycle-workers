@@ -18,10 +18,6 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireWildcard(_mongoose);
 
-var _queue = require('./lib/queue');
-
-var _queue2 = _interopRequireWildcard(_queue);
-
 var _import = require('./processors/index');
 
 var processors = _interopRequireWildcard(_import);
@@ -37,7 +33,7 @@ db.on('error', function () {
 });
 db.once('open', function () {
   console.log('Successfully connected to mongo, starting processors.');
-  processors.start(_queue2['default']);
+  processors.start();
 });
 
 // Cleanup just in case
@@ -45,15 +41,3 @@ process.once('SIGTERM', function (sig) {
   db.close();
   server.close();
 });
-
-// TESTING -----------------------------------------------------
-console.log('Pushing test jobs...');
-
-// let job = queue.create('summaryEmail', {
-//   viewId: 'j74dvzrWjf5qm3tSH'
-// }).removeOnComplete(true).save();
-
-var job = _queue2['default'].create('retentionQueryBuilder', {
-  viewId: 'j74dvzrWjf5qm3tSH',
-  cohortInterval: 'day'
-}).removeOnComplete(true).save();

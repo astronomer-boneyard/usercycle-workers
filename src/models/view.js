@@ -8,24 +8,24 @@ import co from 'co';
 let schema = new mongoose.Schema({
   _id: String,
   name: String,
-  projectId: String,
+  project: {type: String, ref: 'Project'},
   start: {},
   end: {},
-  emails: []
+  emails: [],
 });
 
 let instanceMethods = {
-  project: function* () {
-    return this.model('Project').findOne({_id: this.projectId}).exec();
-  },
-
   firstTimestamp: function* (collection) {
-    let project = yield this.project();
+    if (!this.populated('project')) {
+      yield this.populate('project').execPopulate();
+    }
+
     let min = new Keen.Query('minimum', {
       event_collection: collection,
       target_property: 'keen.timestamp'
     });
-    let response = yield QueryRunner.run(project, min);
+
+    let response = yield QueryRunner.run(this.project, min);
     return response.result;
   },
 

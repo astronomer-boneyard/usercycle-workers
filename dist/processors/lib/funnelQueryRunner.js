@@ -26,38 +26,41 @@ var _Project2 = _interopRequireWildcard(_Project);
 
 exports['default'] = _stampit2['default']().enclose(function () {
 
-  this.process = regeneratorRuntime.mark(function callee$1$0(job, done) {
-    var _job$data, viewId, cohortInterval, steps, view, project, query;
+  this.handleResponse = function (response) {
+    throw new Error('handleResponse not implemented!');
+  };
+
+  this.process = regeneratorRuntime.mark(function callee$1$0() {
+    var _job$data, viewId, cohortInterval, steps, view, query, response;
 
     return regeneratorRuntime.wrap(function callee$1$0$(context$2$0) {
       while (1) switch (context$2$0.prev = context$2$0.next) {
         case 0:
-          _job$data = job.data;
+          _job$data = this.job.data;
           viewId = _job$data.viewId;
           cohortInterval = _job$data.cohortInterval;
           steps = _job$data.steps;
           context$2$0.next = 6;
-          return _View2['default'].findOne({ _id: viewId }).exec();
+          return _View2['default'].findOne({ _id: viewId }).populate({ path: 'project' }).exec();
 
         case 6:
           view = context$2$0.sent;
 
-          if (!view) done(new Error('View does not exist'));
+          if (!view) this.done(new Error('View does not exist'));
 
-          context$2$0.next = 10;
-          return view.project();
-
-        case 10:
-          project = context$2$0.sent;
-
-          if (!project) done(new Error('Project does not exist'));
-
-          console.log('Running ' + cohortInterval + ' queries for ' + project.name);
+          console.log('Running ' + cohortInterval + ' queries for ' + view.project.name);
 
           query = new _QueryRunner$Keen.Keen.Query('funnel', { steps: steps });
+          context$2$0.next = 12;
+          return _QueryRunner$Keen.QueryRunner.run(view.project, query);
 
-          console.log(query.params);
-          done();
+        case 12:
+          response = context$2$0.sent;
+          context$2$0.next = 15;
+          return this.handleResponse(response);
+
+        case 15:
+          this.done();
 
         case 16:
         case 'end':
