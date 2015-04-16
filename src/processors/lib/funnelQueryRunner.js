@@ -6,10 +6,12 @@ import Project from '../../models/project';
 
 export default stampit().enclose(function() {
 
+  // Handle a single response, typically transformation and persisting to our db
   this.handleResponse = function(response) {
     throw new Error('handleResponse not implemented!');
   }
 
+  // Run the previously created query
   this.process = function* () {
     let {viewId, cohortInterval, steps} = this.job.data;
 

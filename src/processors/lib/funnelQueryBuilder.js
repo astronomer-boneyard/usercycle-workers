@@ -25,7 +25,7 @@ export default stampit().enclose(function() {
     this.done();
   }
 
-
+  // Generate queries for a given interval
   this.generateForInterval = function* (view, cohortInterval) {
     console.log(`Building ${cohortInterval} queries for ${view.project.name}`);
 
@@ -37,6 +37,7 @@ export default stampit().enclose(function() {
     let totalIntervalsSinceRetention = moment.utc().diff(firstEndEvent, `${cohortInterval}s`);
     let minTotalPeriodsSinceRetention = Math.min(totalIntervalsSinceRetention, util.MAX_COHORTS_PER_INTERVAL);
 
+    // Generate queries for the most recent {util.MAX_COHORTS_PER_INTERVAL} intervals
     for (let i = minTotalIntervalsSinceSignup; i >= 0; i--) {
       let cohortDay = moment.utc().subtract(i, `${cohortInterval}s`);
       let cohortStart = cohortDay.startOf(cohortInterval).format();
@@ -45,6 +46,7 @@ export default stampit().enclose(function() {
       this.generateForCohort(view, cohortInterval, intervalsToQuery, cohortStart, cohortEnd);
     }
 
+    // Generate queries for the all time cohort
     if (totalIntervalsSinceSignup > util.MAX_COHORTS_PER_INTERVAL) {
       let cohortStart = firstStartEvent.startOf(cohortInterval).format();
       let cohortEndDay = moment.utc().subtract(minTotalIntervalsSinceSignup, `${cohortInterval}s`);
@@ -54,6 +56,7 @@ export default stampit().enclose(function() {
   }
 
 
+  // Generate queries for a given cohort
   this.generateForCohort = function(view, cohortInterval, intervalsToQuery, cohortStart, cohortEnd) {
     // Default to total intervals (full load).  Override getIntervalCount to change.
     let intervals = this.getIntervalCount ? this.getIntervalCount() : intervalsToQuery;
@@ -66,7 +69,7 @@ export default stampit().enclose(function() {
     }
   };
 
-
+  // Push a single query job onto the queue to be executed later
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     throw new Error('pushQuery not implemented!');
   };
