@@ -18,15 +18,15 @@ var _util = require('../../lib/util');
 
 var _util2 = _interopRequireWildcard(_util);
 
-var _queue = require('../../lib/queue');
+var _progressJobCreator = require('../lib/progressJobCreator');
 
-var _queue2 = _interopRequireWildcard(_queue);
+var _progressJobCreator2 = _interopRequireWildcard(_progressJobCreator);
 
 var _funnelQueryBuilder = require('../lib/funnelQueryBuilder');
 
 var _funnelQueryBuilder2 = _interopRequireWildcard(_funnelQueryBuilder);
 
-var retentionQueryBuilder = _stampit2['default']().enclose(function () {
+var retentionQueryBuilder = _stampit2['default']().enclose(function (job, done) {
 
   this.pushQuery = function (view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     var steps = [];
@@ -48,13 +48,14 @@ var retentionQueryBuilder = _stampit2['default']().enclose(function () {
       });
     });
 
-    _queue2['default'].create('retentionQueryRunner', {
+    this.createJob('retentionQueryRunner', {
+      title: 'Retention query - ' + view.project.name + ': ' + view.name,
       viewId: view._id,
       cohortInterval: cohortInterval,
       steps: steps
-    }).removeOnComplete(true).save();
+    });
   };
 });
 
-exports['default'] = _stampit2['default'].compose(_funnelQueryBuilder2['default'], retentionQueryBuilder);
+exports['default'] = _stampit2['default'].compose(_progressJobCreator2['default'], _funnelQueryBuilder2['default'], retentionQueryBuilder);
 module.exports = exports['default'];

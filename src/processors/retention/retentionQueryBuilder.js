@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import stampit from 'stampit';
 import util from '../../lib/util';
-import queue from '../../lib/queue';
+import progressJobCreator from '../lib/progressJobCreator';
 import funnelQueryBuilder from '../lib/funnelQueryBuilder';
 
-let retentionQueryBuilder = stampit().enclose(function() {
+let retentionQueryBuilder = stampit().enclose(function(job, done) {
 
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     let steps = [];
@@ -26,13 +26,14 @@ let retentionQueryBuilder = stampit().enclose(function() {
       });
     });
 
-    queue.create('retentionQueryRunner', {
+    this.createJob('retentionQueryRunner', {
+      title: `Retention query - ${view.project.name}: ${view.name}`,
       viewId: view._id,
       cohortInterval,
       steps
-    }).removeOnComplete(true).save();
+    });
 
   }
 });
 
-export default stampit.compose(funnelQueryBuilder, retentionQueryBuilder);
+export default stampit.compose(progressJobCreator, funnelQueryBuilder, retentionQueryBuilder);

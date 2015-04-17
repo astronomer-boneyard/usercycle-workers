@@ -17,7 +17,6 @@ let retentionQueryRunner = stampit().enclose(function() {
     let modifier = { $set: {cohortSize, measurementValue} };
 
     yield Retention.update(selector, modifier, {upsert: true});
-    console.log(selector);
   }
 });
 

@@ -37,9 +37,6 @@ var retentionQueryRunner = _stampit2['default']().enclose(function () {
           return _Retention2['default'].update(selector, modifier, { upsert: true });
 
         case 7:
-          console.log(selector);
-
-        case 8:
         case 'end':
           return context$2$0.stop();
       }

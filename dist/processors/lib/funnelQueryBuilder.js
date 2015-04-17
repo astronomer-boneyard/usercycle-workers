@@ -31,7 +31,7 @@ var _Project = require('../../models/project');
 var _Project2 = _interopRequireWildcard(_Project);
 
 //
-// Main funnel query processor
+// Main funnel query builder
 // Overridable: {Required} pushQuery()
 //              {Optional} getIntervalCount()
 //
@@ -57,21 +57,26 @@ exports['default'] = _stampit2['default']().enclose(function () {
           if (!view) this.done(new Error('View does not exist'));
 
           context$2$0.next = 9;
-          return _import2['default'].map(_util2['default'].INTERVALS, function (cohortInterval) {
+          return view.ensureZeroProgress();
+
+        case 9:
+          context$2$0.next = 11;
+          return _import2['default'].map(['week'], function (cohortInterval) {
             return _this.generateForInterval(view, cohortInterval);
           });
 
-        case 9:
+        case 11:
 
           this.done();
 
-        case 10:
+        case 12:
         case 'end':
           return context$2$0.stop();
       }
     }, callee$1$0, this);
   });
 
+  // Generate queries for a given interval
   this.generateForInterval = regeneratorRuntime.mark(function callee$1$1(view, cohortInterval) {
     var firstStartEvent, totalIntervalsSinceSignup, minTotalIntervalsSinceSignup, firstEndEvent, totalIntervalsSinceRetention, minTotalPeriodsSinceRetention, i, cohortDay, cohortStart, cohortEnd, intervalsToQuery, cohortEndDay;
     return regeneratorRuntime.wrap(function callee$1$1$(context$2$0) {
@@ -94,6 +99,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
           totalIntervalsSinceRetention = _moment2['default'].utc().diff(firstEndEvent, '' + cohortInterval + 's');
           minTotalPeriodsSinceRetention = Math.min(totalIntervalsSinceRetention, _util2['default'].MAX_COHORTS_PER_INTERVAL);
 
+          // Generate queries for the most recent {util.MAX_COHORTS_PER_INTERVAL} intervals
           for (i = minTotalIntervalsSinceSignup; i >= 0; i--) {
             cohortDay = _moment2['default'].utc().subtract(i, '' + cohortInterval + 's');
             cohortStart = cohortDay.startOf(cohortInterval).format();
@@ -103,6 +109,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
             this.generateForCohort(view, cohortInterval, intervalsToQuery, cohortStart, cohortEnd);
           }
 
+          // Generate queries for the all time cohort
           if (totalIntervalsSinceSignup > _util2['default'].MAX_COHORTS_PER_INTERVAL) {
             cohortStart = firstStartEvent.startOf(cohortInterval).format();
             cohortEndDay = _moment2['default'].utc().subtract(minTotalIntervalsSinceSignup, '' + cohortInterval + 's');
@@ -118,6 +125,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
     }, callee$1$1, this);
   });
 
+  // Generate queries for a given cohort
   this.generateForCohort = function (view, cohortInterval, intervalsToQuery, cohortStart, cohortEnd) {
     // Default to total intervals (full load).  Override getIntervalCount to change.
     var intervals = this.getIntervalCount ? this.getIntervalCount() : intervalsToQuery;
@@ -130,8 +138,11 @@ exports['default'] = _stampit2['default']().enclose(function () {
     }
   };
 
+  // Push a single query job onto the queue to be executed later
   this.pushQuery = function (view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     throw new Error('pushQuery not implemented!');
   };
 });
 module.exports = exports['default'];
+
+// XXX: SWITCH BACK

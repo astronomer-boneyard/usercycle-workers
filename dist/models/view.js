@@ -34,9 +34,29 @@ var schema = new _mongoose2['default'].Schema({
   project: { type: String, ref: 'Project' },
   start: {},
   end: {},
-  emails: [] });
+  emails: [],
+  progress: {}
+});
 
 var instanceMethods = {
+  ensureZeroProgress: regeneratorRuntime.mark(function ensureZeroProgress() {
+    return regeneratorRuntime.wrap(function ensureZeroProgress$(context$1$0) {
+      while (1) switch (context$1$0.prev = context$1$0.next) {
+        case 0:
+          this.progress = { total: 0, complete: 0 };
+          context$1$0.next = 3;
+          return this.save();
+
+        case 3:
+          return context$1$0.abrupt('return', context$1$0.sent);
+
+        case 4:
+        case 'end':
+          return context$1$0.stop();
+      }
+    }, ensureZeroProgress, this);
+  }),
+
   firstTimestamp: regeneratorRuntime.mark(function firstTimestamp(collection) {
     var min, response;
     return regeneratorRuntime.wrap(function firstTimestamp$(context$1$0) {

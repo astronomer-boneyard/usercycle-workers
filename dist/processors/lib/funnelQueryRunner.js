@@ -26,10 +26,12 @@ var _Project2 = _interopRequireWildcard(_Project);
 
 exports['default'] = _stampit2['default']().enclose(function () {
 
+  // Handle a single response, typically transformation and persisting to our db
   this.handleResponse = function (response) {
     throw new Error('handleResponse not implemented!');
   };
 
+  // Run the previously created query
   this.process = regeneratorRuntime.mark(function callee$1$0() {
     var _job$data, viewId, cohortInterval, steps, view, query, response;
 
@@ -48,7 +50,7 @@ exports['default'] = _stampit2['default']().enclose(function () {
 
           if (!view) this.done(new Error('View does not exist'));
 
-          console.log('Running ' + cohortInterval + ' queries for ' + view.project.name);
+          console.log('Running ' + cohortInterval + ' query for ' + view.project.name);
 
           query = new _QueryRunner$Keen.Keen.Query('funnel', { steps: steps });
           context$2$0.next = 12;

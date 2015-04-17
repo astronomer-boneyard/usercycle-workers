@@ -22,7 +22,7 @@ function createHandler(factory) {
 
     // Call our wrapped and bound function and return a promise
     bound().catch(function(error) {
-      console.error('An error occured processing a job:\n', error.stack);
+      console.error('An error occured processing a job:\n', error);
       done(new Error(`${error.name} - ${error.message}`));
     });
   }

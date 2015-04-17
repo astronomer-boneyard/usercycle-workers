@@ -12,9 +12,15 @@ let schema = new mongoose.Schema({
   start: {},
   end: {},
   emails: [],
+  progress: {}
 });
 
 let instanceMethods = {
+  ensureZeroProgress: function* () {
+    this.progress = {total: 0, complete: 0}
+    return yield this.save();
+  },
+
   firstTimestamp: function* (collection) {
     if (!this.populated('project')) {
       yield this.populate('project').execPopulate();

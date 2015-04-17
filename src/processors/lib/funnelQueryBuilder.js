@@ -6,7 +6,7 @@ import View from '../../models/view';
 import Project from '../../models/project';
 
 //
-// Main funnel query processor
+// Main funnel query builder
 // Overridable: {Required} pushQuery()
 //              {Optional} getIntervalCount()
 //
@@ -18,12 +18,15 @@ export default stampit().enclose(function() {
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
     if (!view) this.done(new Error('View does not exist'));
 
-    yield _.map(util.INTERVALS, (cohortInterval) => {
+    yield view.ensureZeroProgress();
+
+    // XXX: SWITCH BACK
+    yield _.map(['week'], (cohortInterval) => {
       return this.generateForInterval(view, cohortInterval);
     });
 
     this.done();
-  }
+  };
 
   // Generate queries for a given interval
   this.generateForInterval = function* (view, cohortInterval) {
@@ -53,7 +56,7 @@ export default stampit().enclose(function() {
       let cohortEnd = cohortEndDay.endOf(cohortInterval).format();
       this.generateForCohort(view, cohortInterval, totalIntervalsSinceRetention, cohortStart, cohortEnd);
     }
-  }
+  };
 
 
   // Generate queries for a given cohort
