@@ -15,6 +15,24 @@ let schema = new mongoose.Schema({
   progress: {}
 });
 
+schema.statics.incTotalProgress = function(viewId, count = 1) {
+  let selector = {_id: viewId},
+      modifier = { $inc: {'progress.total': 1} };
+  this.update(selector, modifier, _.noop);
+};
+
+schema.statics.incCompleteProgress = function(viewId, count = 1) {
+  let selector = {_id: viewId},
+      modifier = {$inc: {'progress.complete': 1}},
+      options = {new: true};
+
+  this.findOneAndUpdate(selector, modifier, options, (error, view) => {
+    if (view.progress.complete === view.progress.total) {
+      view.ensureZeroProgress();
+    }
+  });
+}
+
 let instanceMethods = {
   ensureZeroProgress: function* () {
     this.progress = {total: 0, complete: 0}

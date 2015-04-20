@@ -1,17 +1,15 @@
 import kue from 'kue';
+import config from 'config';
 
 // Setup kue
-let queue = kue.createQueue();
-queue.promote(5000, 5);
+let queue = kue.createQueue({
+  redis: {
+    host: config.get('REDIS_HOST'),
+    port: config.get('REDIS_PORT')
+  }
+});
 
-// Requeue (stuck) active jobs
-// queue.active( function( err, ids ) {
-//   ids.forEach( function( id ) {
-//     kue.Job.get( id, function( err, job ) {
-//       job.inactive();
-//     });
-//   });
-// });
+queue.promote(2500, 200);
 
 // Graceful shutdown
 process.once( 'SIGTERM', function (sig) {

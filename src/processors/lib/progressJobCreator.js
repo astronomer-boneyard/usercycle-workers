@@ -8,32 +8,23 @@ import View from '../../models/view';
 //
 export default stampit().enclose(function() {
 
+  let count = 0;
+
   this.createJob = function(jobType, data) {
+    count++;
+
+    // Add progress flag
+    data.showProgress = true;
+
+    // Save the job
     let job = queue.create(jobType, data)
       .removeOnComplete(true)
+      .delay(count * 1000)
       .attempts(5)
       .backoff({delay: 60*1000, type:'exponential'})
       .save();
 
-    job.on('enqueue', (param) => {
-      let selector = {_id: data.viewId},
-          modifier = { $inc: {'progress.total': 1} };
-
-      View.update(selector, modifier, _.noop);
-    });
-
-    job.on('complete', (result) => {
-      let selector = {_id: data.viewId},
-          modifier = { $inc: {'progress.complete': 1} },
-          options = { new: true};
-
-      View.findOneAndUpdate(selector, modifier, options, (error, view) => {
-        if (view.progress.complete === view.progress.total) {
-          view.ensureZeroProgress();
-        }
-      });
-    });
-
+    // Increment total progress
+    View.incTotalProgress(data.viewId);
   };
-
 });

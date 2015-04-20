@@ -18,7 +18,7 @@ let stamp = stampit().enclose(function() {
     let client = getClient(project);
     let arr = _.flatten([queries]);
     return client.run(arr);
-  }
+  };
 
 });
 

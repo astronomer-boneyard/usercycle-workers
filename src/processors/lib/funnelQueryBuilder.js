@@ -21,7 +21,7 @@ export default stampit().enclose(function() {
     yield view.ensureZeroProgress();
 
     // XXX: SWITCH BACK
-    yield _.map(['week'], (cohortInterval) => {
+    yield _.map(['month'], (cohortInterval) => {
       return this.generateForInterval(view, cohortInterval);
     });
 

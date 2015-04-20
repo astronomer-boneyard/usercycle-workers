@@ -22,7 +22,7 @@ export default stampit().enclose(function() {
 
     let query = new Keen.Query('funnel', {steps});
     let response = yield QueryRunner.run(view.project, query);
-    yield this.handleResponse(response);
+    yield this.handleResponse(view, response);
     this.done();
   }
 });

@@ -2,9 +2,11 @@ import _ from 'lodash';
 import stampit from 'stampit';
 import Retention from '../../models/retention';
 import funnelQueryRunner from '../lib/funnelQueryRunner';
+import progressJob from '../lib/progressJob';
 
 let retentionQueryRunner = stampit().enclose(function() {
-  this.handleResponse = function* (response) {
+
+  this.handleResponse = function* (view, response) {
     let {steps, result} = response;
     let viewId = this.job.data.viewId,
         cohortInterval = this.job.data.cohortInterval,
@@ -17,7 +19,7 @@ let retentionQueryRunner = stampit().enclose(function() {
     let modifier = { $set: {cohortSize, measurementValue} };
 
     yield Retention.update(selector, modifier, {upsert: true});
-  }
+  };
 });
 
-export default stampit.compose(funnelQueryRunner, retentionQueryRunner);
+export default stampit.compose(progressJob, funnelQueryRunner, retentionQueryRunner);

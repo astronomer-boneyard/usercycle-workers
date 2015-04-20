@@ -5,15 +5,12 @@
 // XXX: RUNTIME POLYFILL: Required for generators and others
 import 'babel/polyfill';
 
-import dotenv from 'dotenv';
+import config from 'config';
 import mongoose from 'mongoose';
 import * as processors from './processors/index';
 
-// Load environment variables into process.env from .env file
-dotenv.load();
-
 // Connect to mongo then start processing jobs
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(config.get('MONGO_URL'));
 let db = mongoose.connection;
 db.on('error', () => {
   console.error('Mongo connection error.');
