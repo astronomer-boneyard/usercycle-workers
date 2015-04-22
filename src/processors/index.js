@@ -1,8 +1,10 @@
 import _ from 'lodash';
 import co from 'co';
+import stampit from 'stampit';
 import queue from '../lib/queue';
 import counters from '../lib/counters';
 import View from '../models/view';
+import jobLifecycle from './lib/jobLifecycle';
 import summaryEmail from './emails/summaryEmail';
 import retentionQueryBuilder from './retention/retentionQueryBuilder';
 import retentionQueryRunner from './retention/retentionQueryRunner';
@@ -10,10 +12,15 @@ import revenueQueryBuilder from './revenue/revenueQueryBuilder';
 import revenueQueryRunner from './revenue/revenueQueryRunner';
 import revenueSum from './revenue/revenueSum';
 
+
 function createHandler(factory) {
+  // Reassign factory - mixin lifecycle management
+  factory = stampit.compose(jobLifecycle, factory);
+
   // This function serves as a generic handler
   // It is in charge of creating a new handler and passing the job
-  return function(job, done) {
+  return function(job, done, ctx) {
+
     // Produce a new instance from factory
     let processor = factory.create({job, done});
 
@@ -21,22 +28,28 @@ function createHandler(factory) {
     let onError = function(error) {
       console.error('An error occured processing a job:\n', error);
       done(new Error(`${error.name} - ${error.message}`));
-      counters.decrement(job.data.viewId);
     };
 
-    let onComplete = function() {
-      counters.decrement(job.data.viewId);
-    };
-
-    co(function* () {
-      let count = yield counters.increment(job.data.viewId);
-      if (count < 10) {
+    co(function*() {
+      // Determine if we can continue (ie. no query locks)
+      if (yield processor.runOnBefore()) {
+        // Run main process function
         yield processor.process();
-        processor.onComplete && processor.onComplete();
+        // Upon successful completion of process, run any onComplete functions
+        processor.runOnComplete();
       } else {
-        job.delay(10000).delayed();
+        // We cannot process this job, kill it and enqueue a duplicate
+        done();
+        queue.create(job.type, job.data)
+          .delay(5000)
+          .removeOnComplete(job._removeOnComplete)
+          .attempts(job._max_attempts)
+          .backoff(job._backoff)
+          .priority(job._priority)
+          .save();
       }
-    }).then(onComplete).catch(onError);
+    }).catch(onError)
+      .finally(processor.runOnAfter);
   }
 }
 
@@ -62,12 +75,25 @@ console.log('Pushing test jobs...');
 // let job = queue.create('summaryEmail', {
 //   viewId: 'j74dvzrWjf5qm3tSH'
 // }).removeOnComplete(true).save();
-//
 
-// let job = queue.create('retentionQueryBuilder', {
-//   viewId: 'fzGirKkNGLKpaBmZT'
+queue.create('retentionQueryBuilder', {
+  viewId: 'fzGirKkNGLKpaBmZT'
+}).removeOnComplete(true).save();
+
+// queue.create('retentionQueryBuilder', {
+//   viewId: 'kYjBZRX8myih4fJCb'
 // }).removeOnComplete(true).save();
 
-let job = queue.create('revenueQueryBuilder', {
-  viewId: 'QhByiDFWxmvFywRiZ'
-}).removeOnComplete(true).save();
+
+// ['kYjBZRX8myih4fJCb',
+// 'fzGirKkNGLKpaBmZT',
+// 'carMscSqEZ7XupbL8'].forEach((id) => {
+//   queue.create('retentionQueryBuilder', {
+//     viewId: id
+//   }).removeOnComplete(true).save();
+// });
+
+
+// let job = queue.create('revenueQueryBuilder', {
+//   viewId: 'QhByiDFWxmvFywRiZ'
+// }).removeOnComplete(true).save();

@@ -19,6 +19,7 @@
     "moment": "^2.10.2",
     "mongodb": "^1.4.35",
     "mongoose": "^4.0.1",
+    "promise.prototype.finally": "^1.0.1",
     "promisify-node": "^0.1.5",
     "redis": "^0.12.1",
     "stampit": "^1.1.0"

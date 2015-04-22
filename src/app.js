@@ -4,6 +4,7 @@
 
 // XXX: RUNTIME POLYFILL: Required for generators and others
 import 'babel/polyfill';
+import 'promise.prototype.finally';
 
 import config from 'config';
 import mongoose from 'mongoose';
@@ -23,5 +24,4 @@ db.once('open', () => {
 // Cleanup just in case
 process.once('SIGTERM', function(sig) {
   db.close();
-  server.close();
 });

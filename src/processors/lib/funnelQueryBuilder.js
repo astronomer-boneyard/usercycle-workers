@@ -16,11 +16,10 @@ export default stampit().enclose(function() {
     let {viewId, cohortInterval} = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
-    if (!view) this.done(new Error('View does not exist'));
+    if (!view) return this.done(new Error('View does not exist'));
 
     yield view.ensureZeroProgress();
 
-    // XXX: SWITCH BACK
     yield _.map(['month'], (cohortInterval) => {
       return this.generateForInterval(view, cohortInterval);
     });
@@ -30,7 +29,7 @@ export default stampit().enclose(function() {
 
   // Generate queries for a given interval
   this.generateForInterval = function* (view, cohortInterval) {
-    console.log(`Building ${cohortInterval} queries for ${view.project.name}`);
+    // console.log(`Building ${cohortInterval} queries for ${view.project.name}`);
 
     let firstStartEvent = yield view.firstStartEventForInterval(cohortInterval);
     let totalIntervalsSinceSignup = moment.utc().diff(firstStartEvent, `${cohortInterval}s`);

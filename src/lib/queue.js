@@ -9,7 +9,7 @@ let queue = kue.createQueue({
   }
 });
 
-queue.promote(2500, 200);
+queue.promote(1000, 10000);
 
 // Graceful shutdown
 process.once( 'SIGTERM', function (sig) {

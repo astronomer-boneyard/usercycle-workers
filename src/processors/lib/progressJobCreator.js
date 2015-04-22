@@ -7,21 +7,17 @@ import View from '../../models/view';
 // Mixin for controlling progress on views
 //
 export default stampit().enclose(function() {
-
   let count = 0;
 
   this.createJob = function(jobType, data) {
     count++;
 
-    // Add progress flag
-    data.showProgress = true;
-
     // Save the job
     let job = queue.create(jobType, data)
       .removeOnComplete(true)
-      .delay(count * 1000)
-      .attempts(5)
-      .backoff({delay: 60*1000, type:'exponential'})
+      .delay(count * 500)
+      .attempts(10)
+      .backoff({delay: 2*60*1000, type:'exponential'})
       .save();
 
     // Increment total progress

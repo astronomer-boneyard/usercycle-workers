@@ -3,6 +3,7 @@ import stampit from 'stampit';
 import Retention from '../../models/retention';
 import funnelQueryRunner from '../lib/funnelQueryRunner';
 import progressJob from '../lib/progressJob';
+import delayableJob from '../lib/delayableJob';
 
 let retentionQueryRunner = stampit().enclose(function() {
 
@@ -22,4 +23,4 @@ let retentionQueryRunner = stampit().enclose(function() {
   };
 });
 
-export default stampit.compose(progressJob, funnelQueryRunner, retentionQueryRunner);
+export default stampit.compose(delayableJob, progressJob, funnelQueryRunner, retentionQueryRunner);
