@@ -5,8 +5,10 @@ import queue from '../lib/queue';
 import View from '../models/view';
 import jobLifecycle from './lib/jobLifecycle';
 import summaryEmail from './emails/summaryEmail';
-import retentionQueryBuilder from './retention/retentionBuilder';
-import retentionQueryRunner from './retention/retentionRunner';
+import fullRetentionBuilder from './retention/fullRetentionBuilder';
+import refreshRetentionBuilder from './retention/refreshRetentionBuilder';
+import retentionRunner from './retention/retentionRunner';
+
 import revenueQueryBuilder from './revenue/revenueBuilder';
 import revenueQueryRunner from './revenue/revenueRunner';
 import revenueSum from './revenue/revenueSum';
@@ -16,8 +18,10 @@ import refreshAllViews from './cron/refreshAllViews';
 // Start kue processors, with the function returned by `createHandler`
 export function start(queue) {
   startProcessing('summaryEmail', createHandler(summaryEmail));
-  startProcessing('retentionQueryBuilder', createHandler(retentionQueryBuilder));
-  startProcessing('retentionQueryRunner', createHandler(retentionQueryRunner));
+  startProcessing('fullRetentionBuilder', createHandler(fullRetentionBuilder));
+  startProcessing('refreshRetentionBuilder', createHandler(refreshRetentionBuilder));
+  startProcessing('retentionRunner', createHandler(retentionRunner));
+
   startProcessing('revenueQueryBuilder', createHandler(revenueQueryBuilder));
   startProcessing('revenueQueryRunner', createHandler(revenueQueryRunner));
   startProcessing('revenueSum', createHandler(revenueSum));
@@ -26,7 +30,7 @@ export function start(queue) {
 
 
 function startProcessing(type, handler) {
-  queue.process(type, 100, handler);
+  queue.process(type, 10, handler);
 }
 
 
@@ -43,8 +47,15 @@ function createHandler(factory) {
 
     // Handle errors when running a job
     let onError = function(error) {
-      console.error('An error occured processing a job:\n', error);
+      console.error(
+        '\n\n', `An error occured processing job #${job.id}\n`,
+        'Job data ---',
+        '\n', job.data, '\n',
+        'Error ---',
+        '\n', error, '\n'
+      );
       done(new Error(`${error.name} - ${error.message}`));
+      processor.runOnError(error, job);
     };
 
     co(function*() {

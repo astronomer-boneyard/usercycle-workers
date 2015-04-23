@@ -2,7 +2,7 @@ import _ from 'lodash';
 import stampit from 'stampit';
 
 export default stampit().enclose(function() {
-  let onBefore = [], onAfter = [], onComplete = [];
+  let onBefore = [], onAfter = [], onComplete = [], onError = [];
 
   return stampit.mixIn(this, {
     onBefore: function(fn) {
@@ -17,6 +17,10 @@ export default stampit().enclose(function() {
       onComplete.push(_.bind(fn, this));
     },
 
+    onError: function(fn) {
+      onError.push(_.bind(fn, this));
+    },
+
     runOnBefore: function* () {
       let results = yield _.map(onBefore, (fn) => { return fn(); });
       return _.all(results, (cancel) => { return !!cancel === false });
@@ -28,6 +32,10 @@ export default stampit().enclose(function() {
 
     runOnComplete: function() {
       _.map(onComplete, (fn) => { return fn(); });
+    },
+
+    runOnError: function(error, job) {
+      _.map(onError, (fn) => { return fn(error, job); });
     }
   });
 });

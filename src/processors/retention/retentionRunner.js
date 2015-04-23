@@ -4,6 +4,7 @@ import Retention from '../../models/retention';
 import funnelRunner from '../lib/funnelRunner';
 import progressJob from '../lib/progressJob';
 import delayableJob from '../lib/delayableJob';
+import updateViewLastModified from '../lib/updateViewLastModified';
 
 let retentionRunner = stampit().enclose(function() {
 
@@ -23,4 +24,4 @@ let retentionRunner = stampit().enclose(function() {
   };
 });
 
-export default stampit.compose(delayableJob, progressJob, funnelRunner, retentionRunner);
+export default stampit.compose(delayableJob, progressJob, funnelRunner, retentionRunner, updateViewLastModified);

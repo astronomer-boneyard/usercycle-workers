@@ -4,13 +4,14 @@ import moment from 'moment';
 import util from '../../lib/util';
 import View from '../../models/view';
 import Project from '../../models/project';
+import viewErrorHandler from './viewErrorHandler';
 
 //
 // Main funnel query builder
 // Overridable: {Required} pushQuery()
-//              {Optional} getIntervalCount()
+//              {Required} getIntervalCount()
 //
-export default stampit().enclose(function() {
+let funnelBuilder = stampit().enclose(function() {
 
   this.process = function* () {
     let {viewId, cohortInterval} = this.job.data;
@@ -44,8 +45,8 @@ export default stampit().enclose(function() {
       let cohortDay = moment.utc().subtract(i, `${cohortInterval}s`);
       let cohortStart = cohortDay.startOf(cohortInterval).format();
       let cohortEnd = cohortDay.endOf(cohortInterval).format();
-      let intervalsToQuery = Math.min(i, minTotalPeriodsSinceRetention);
-      this.generateForCohort(view, cohortInterval, intervalsToQuery, cohortStart, cohortEnd);
+      let queryableIntervalsLimit = Math.min(i, minTotalPeriodsSinceRetention);
+      this.generateForCohort(view, cohortInterval, queryableIntervalsLimit, cohortStart, cohortEnd);
     }
 
     // Generate queries for the all time cohort
@@ -59,9 +60,9 @@ export default stampit().enclose(function() {
 
 
   // Generate queries for a given cohort
-  this.generateForCohort = function(view, cohortInterval, intervalsToQuery, cohortStart, cohortEnd) {
+  this.generateForCohort = function(view, cohortInterval, queryableIntervalsLimit, cohortStart, cohortEnd) {
     // Default to total intervals (full load).  Override getIntervalCount to change.
-    let intervals = this.getIntervalCount ? this.getIntervalCount() : intervalsToQuery;
+    let intervals = this.getIntervalCount(view, queryableIntervalsLimit, cohortInterval)
 
     for (let i = intervals; i >= 0; i--) {
       let queryDay = moment.utc().subtract(i, `${cohortInterval}s`);
@@ -71,8 +72,17 @@ export default stampit().enclose(function() {
     }
   };
 
+
+  this.getIntervalCount = function(view, queryableIntervalsLimit, cohortInterval) {
+    throw new Error('getIntervalCount not implemented!');
+  };
+
+
   // Push a single query job onto the queue to be executed later
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     throw new Error('pushQuery not implemented!');
   };
 });
+
+
+export default stampit.compose(funnelBuilder, viewErrorHandler);

@@ -11,7 +11,9 @@ let schema = new mongoose.Schema({
   start: {},
   end: {},
   emails: [],
-  progress: {}
+  progress: {},
+  locked: Boolean,
+  lastModified: Date
 });
 
 schema.statics.incTotalProgress = function(viewId, count = 1) {

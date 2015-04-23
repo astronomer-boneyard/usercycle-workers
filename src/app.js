@@ -21,13 +21,14 @@ import * as processors from './processors/index';
 function runtest() {
   // console.log('Pushing test jobs...');
 
-  queue.create('retentionQueryBuilder', {
-    viewId: 'fzGirKkNGLKpaBmZT'
-  }).removeOnComplete(true).save();
-  //
-  // queue.create('retentionQueryBuilder', {
-  //   viewId: 'kYjBZRX8myih4fJCb'
+  // queue.create('refreshRetentionBuilder', {
+  //   viewId: 'fzGirKkNGLKpaBmZT'
   // }).removeOnComplete(true).save();
+  //
+  queue.create('refreshRetentionBuilder', {
+    // viewId: 'kYjBZRX8myih4fJCb'
+    viewId: '5ZZsnBe8yPGH7gZxs',
+  }).removeOnComplete(true).save();
 
   // ['kYjBZRX8myih4fJCb',
   // 'fzGirKkNGLKpaBmZT',

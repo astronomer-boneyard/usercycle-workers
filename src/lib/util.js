@@ -5,7 +5,7 @@ export default {
 
   INTERVALS: ['day', 'week', 'month'],
 
-  convertvalue: function(val, fn) {
+  convertValue: function(val, fn) {
     val = _.isArray(val) ? _.map(val, (v) => { _.trim(v) }) : _.trim(val);
     return _.isArray(val) ? _.map(val, fn) : fn(val);
   },

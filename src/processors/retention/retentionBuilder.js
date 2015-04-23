@@ -5,7 +5,7 @@ import progressJobCreator from '../lib/progressJobCreator';
 import funnelBuilder from '../lib/funnelBuilder';
 import delayableJob from '../lib/delayableJob';
 
-let retentionBuilder = stampit().enclose(function() {
+export default stampit().enclose(function() {
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     let steps = [];
 
@@ -26,7 +26,7 @@ let retentionBuilder = stampit().enclose(function() {
       });
     });
 
-    this.createJob('retentionQueryRunner', {
+    this.createJob('retentionRunner', {
       title: `Retention query - ${view.project.name}: ${view.name}`,
       viewId: view._id,
       cohortInterval,
@@ -35,5 +35,3 @@ let retentionBuilder = stampit().enclose(function() {
 
   }
 });
-
-export default stampit.compose(delayableJob, progressJobCreator, funnelBuilder, retentionBuilder);

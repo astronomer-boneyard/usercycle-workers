@@ -3,8 +3,10 @@ import stampit from 'stampit';
 import {QueryRunner, Keen} from '../../datasources/keen';
 import View from '../../models/view';
 import Project from '../../models/project';
+import viewErrorHandler from './viewErrorHandler';
 
-export default stampit().enclose(function() {
+
+let funnelRunner = stampit().enclose(function() {
 
   // Handle a single response, typically transformation and persisting to our db
   this.handleResponse = function(response) {
@@ -26,3 +28,5 @@ export default stampit().enclose(function() {
     this.done();
   }
 });
+
+export default stampit.compose(funnelRunner, viewErrorHandler);
