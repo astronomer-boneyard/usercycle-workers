@@ -1,17 +1,15 @@
 import _ from 'lodash';
 import stampit from 'stampit';
 import keen from 'keen.io';
-import promisify from 'promisify-node';
+import thenifyAll from 'thenify-all';
 
 let stamp = stampit().enclose(function() {
 
   function getClient(project) {
-    let client = keen.configure({
+    return thenifyAll(keen.configure({
       projectId: project.keen.projectId,
       readKey: project.keen.readKey
-    });
-    promisify(client);
-    return client;
+    }));
   }
 
   this.run = function(project, queries) {

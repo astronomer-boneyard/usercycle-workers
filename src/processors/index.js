@@ -12,8 +12,8 @@ import revenueQueryRunner from './revenue/revenueQueryRunner';
 import revenueSum from './revenue/revenueSum';
 
 
+// Start kue processors, with the function returned by `createHandler`
 export function start(queue) {
-  // Setup kue processors
   startProcessing('summaryEmail', createHandler(summaryEmail));
   startProcessing('retentionQueryBuilder', createHandler(retentionQueryBuilder));
   startProcessing('retentionQueryRunner', createHandler(retentionQueryRunner));
@@ -24,7 +24,7 @@ export function start(queue) {
 
 
 function startProcessing(type, handler) {
-  queue.process(type, 50, handler);
+  queue.process(type, 100, handler);
 }
 
 

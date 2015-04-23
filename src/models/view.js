@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import mongoose from 'mongoose';
 import {QueryRunner, Keen} from '../datasources/keen';
-import promisify from 'promisify-node';
 import moment from 'moment';
 import co from 'co';
 
