@@ -9,17 +9,11 @@ let queue = kue.createQueue({
   }
 });
 
-queue.promote(1000, 10000);
-
-// Graceful shutdown
-process.once( 'SIGTERM', function (sig) {
+process.once('SIGTERM', function(sig) {
   queue.shutdown(function(err) {
     console.log('Kue is shut down.', err||'');
     process.exit(0);
   }, 5000 );
 });
-
-// Start GUI server
-let server = kue.app.listen(8080);
 
 export default queue;

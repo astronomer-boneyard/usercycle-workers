@@ -2,7 +2,6 @@ import _ from 'lodash';
 import co from 'co';
 import stampit from 'stampit';
 import queue from '../lib/queue';
-import counters from '../lib/counters';
 import View from '../models/view';
 import jobLifecycle from './lib/jobLifecycle';
 import summaryEmail from './emails/summaryEmail';
@@ -11,6 +10,22 @@ import retentionQueryRunner from './retention/retentionQueryRunner';
 import revenueQueryBuilder from './revenue/revenueQueryBuilder';
 import revenueQueryRunner from './revenue/revenueQueryRunner';
 import revenueSum from './revenue/revenueSum';
+
+
+export function start(queue) {
+  // Setup kue processors
+  startProcessing('summaryEmail', createHandler(summaryEmail));
+  startProcessing('retentionQueryBuilder', createHandler(retentionQueryBuilder));
+  startProcessing('retentionQueryRunner', createHandler(retentionQueryRunner));
+  startProcessing('revenueQueryBuilder', createHandler(revenueQueryBuilder));
+  startProcessing('revenueQueryRunner', createHandler(revenueQueryRunner));
+  startProcessing('revenueSum', createHandler(revenueSum));
+}
+
+
+function startProcessing(type, handler) {
+  queue.process(type, 50, handler);
+}
 
 
 function createHandler(factory) {
@@ -39,6 +54,7 @@ function createHandler(factory) {
         processor.runOnComplete();
       } else {
         // We cannot process this job, kill it and enqueue a duplicate
+        console.log('delaying')
         done();
         queue.create(job.type, job.data)
           .delay(5000)
@@ -52,48 +68,3 @@ function createHandler(factory) {
       .finally(processor.runOnAfter);
   }
 }
-
-function startProcessing(type, handler) {
-  queue.process(type, 50, handler);
-}
-
-export function start(queue) {
-  // Setup kue processors
-  startProcessing('summaryEmail', createHandler(summaryEmail));
-  startProcessing('retentionQueryBuilder', createHandler(retentionQueryBuilder));
-  startProcessing('retentionQueryRunner', createHandler(retentionQueryRunner));
-  startProcessing('revenueQueryBuilder', createHandler(revenueQueryBuilder));
-  startProcessing('revenueQueryRunner', createHandler(revenueQueryRunner));
-  startProcessing('revenueSum', createHandler(revenueSum));
-}
-
-
-
-// TESTING ---------------------------------------------------------------------
-console.log('Pushing test jobs...');
-
-// let job = queue.create('summaryEmail', {
-//   viewId: 'j74dvzrWjf5qm3tSH'
-// }).removeOnComplete(true).save();
-
-queue.create('retentionQueryBuilder', {
-  viewId: 'fzGirKkNGLKpaBmZT'
-}).removeOnComplete(true).save();
-
-// queue.create('retentionQueryBuilder', {
-//   viewId: 'kYjBZRX8myih4fJCb'
-// }).removeOnComplete(true).save();
-
-
-// ['kYjBZRX8myih4fJCb',
-// 'fzGirKkNGLKpaBmZT',
-// 'carMscSqEZ7XupbL8'].forEach((id) => {
-//   queue.create('retentionQueryBuilder', {
-//     viewId: id
-//   }).removeOnComplete(true).save();
-// });
-
-
-// let job = queue.create('revenueQueryBuilder', {
-//   viewId: 'QhByiDFWxmvFywRiZ'
-// }).removeOnComplete(true).save();

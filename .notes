@@ -1,2 +1,9 @@
 npm install systemjs works good - can dynamically traverse directory and load modules, then add handlers.
 trying to do a normal import in a system.imported file - modulues cant be found
+
+
+
+TODO:
+lua scripts
+queue level events - use instead of mixins for progress
+calculate rolling avg time - use to delay jobs
