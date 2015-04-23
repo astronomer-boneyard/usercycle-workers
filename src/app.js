@@ -21,9 +21,9 @@ import * as processors from './processors/index';
 function runtest() {
   // console.log('Pushing test jobs...');
 
-  // queue.create('retentionQueryBuilder', {
-  //   viewId: 'fzGirKkNGLKpaBmZT'
-  // }).removeOnComplete(true).save();
+  queue.create('retentionQueryBuilder', {
+    viewId: 'fzGirKkNGLKpaBmZT'
+  }).removeOnComplete(true).save();
   //
   // queue.create('retentionQueryBuilder', {
   //   viewId: 'kYjBZRX8myih4fJCb'
