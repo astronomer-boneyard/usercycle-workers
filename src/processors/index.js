@@ -30,7 +30,7 @@ export function start(queue) {
 
 
 function startProcessing(type, handler) {
-  queue.process(type, 10, handler);
+  queue.process(type, 50, handler);
 }
 
 
