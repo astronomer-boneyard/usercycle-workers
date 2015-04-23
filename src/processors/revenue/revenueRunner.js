@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import stampit from 'stampit';
 import Revenue from '../../models/revenue';
-import funnelQueryRunner from '../lib/funnelQueryRunner';
+import funnelRunner from '../lib/funnelRunner';
 import progressJobCreator from '../lib/progressJobCreator';
 import progressJob from '../lib/progressJob';
 
 
-let revenueQueryRunner = stampit().enclose(function() {
+let revenueRunner = stampit().enclose(function() {
   this.handleResponse = function* (view, response) {
     let {steps, result, actors} = response;
 
@@ -52,4 +52,4 @@ let revenueQueryRunner = stampit().enclose(function() {
   };
 });
 
-export default stampit.compose(progressJobCreator, progressJob, funnelQueryRunner, revenueQueryRunner);
+export default stampit.compose(progressJobCreator, progressJob, funnelRunner, revenueRunner);

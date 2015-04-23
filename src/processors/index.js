@@ -5,11 +5,12 @@ import queue from '../lib/queue';
 import View from '../models/view';
 import jobLifecycle from './lib/jobLifecycle';
 import summaryEmail from './emails/summaryEmail';
-import retentionQueryBuilder from './retention/retentionQueryBuilder';
-import retentionQueryRunner from './retention/retentionQueryRunner';
-import revenueQueryBuilder from './revenue/revenueQueryBuilder';
-import revenueQueryRunner from './revenue/revenueQueryRunner';
+import retentionQueryBuilder from './retention/retentionBuilder';
+import retentionQueryRunner from './retention/retentionRunner';
+import revenueQueryBuilder from './revenue/revenueBuilder';
+import revenueQueryRunner from './revenue/revenueRunner';
 import revenueSum from './revenue/revenueSum';
+import refreshAllViews from './cron/refreshAllViews';
 
 
 // Start kue processors, with the function returned by `createHandler`
@@ -20,6 +21,7 @@ export function start(queue) {
   startProcessing('revenueQueryBuilder', createHandler(revenueQueryBuilder));
   startProcessing('revenueQueryRunner', createHandler(revenueQueryRunner));
   startProcessing('revenueSum', createHandler(revenueSum));
+  startProcessing('refreshAllViews', createHandler(refreshAllViews));
 }
 
 

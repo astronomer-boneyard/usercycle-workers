@@ -6,7 +6,7 @@ var gulp = require('gulp'),
 var DIST = 'dist';
 
 gulp.task('clean', function() {
-  del(DIST);
+  del(DIST + '/*');
 });
 
 gulp.task('babel', function () {

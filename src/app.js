@@ -19,15 +19,15 @@ import * as processors from './processors/index';
 
 // TESTING ---------------------------------------------------------------------
 function runtest() {
-  console.log('Pushing test jobs...');
+  // console.log('Pushing test jobs...');
 
-  queue.create('retentionQueryBuilder', {
-    viewId: 'fzGirKkNGLKpaBmZT'
-  }).removeOnComplete(true).save();
-
-  queue.create('retentionQueryBuilder', {
-    viewId: 'kYjBZRX8myih4fJCb'
-  }).removeOnComplete(true).save();
+  // queue.create('retentionQueryBuilder', {
+  //   viewId: 'fzGirKkNGLKpaBmZT'
+  // }).removeOnComplete(true).save();
+  //
+  // queue.create('retentionQueryBuilder', {
+  //   viewId: 'kYjBZRX8myih4fJCb'
+  // }).removeOnComplete(true).save();
 
   // ['kYjBZRX8myih4fJCb',
   // 'fzGirKkNGLKpaBmZT',

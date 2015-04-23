@@ -21,7 +21,7 @@ export default stampit().enclose(function() {
       let job = queue.create(jobType, data)
         .removeOnComplete(true)
         .delay(delay)
-        .attempts(10)
+        .attempts(5)
         .backoff({delay: 60*1000, type:'exponential'})
         .save();
 
