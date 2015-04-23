@@ -5,7 +5,7 @@
     "name": "schnie"
   },
   "version": "0.0.1",
-  "main": "build/app.js",
+  "main": "dist/app.js",
   "dependencies": {
     "apostle.io": "^1.0.0",
     "babel": "^5.0.12",
