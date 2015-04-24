@@ -9,8 +9,7 @@ import View from '../../models/view';
 // Mixin for controlling progress on views
 //
 export default stampit().enclose(function() {
-
-  this._createJob = function (jobType, data, callback=_.noop) {
+  this.createJob = function (jobType, data) {
     let key = `delay:${data.viewId}`;
     let cmd = redis.multi().incrby(key, 1000).expire(key, 120);
 
@@ -24,12 +23,12 @@ export default stampit().enclose(function() {
         .delay(delay)
         .attempts(5)
         .backoff({delay: 60*1000, type:'exponential'})
-        .save(callback);
+        .save((error) => {
+          // Increment total progress if its not a refresh
+          if (!this.job.data.refresh) {
+            View.incTotalProgress(this.job.data.viewId);
+          }
+        });
     });
-  };
-
-  // Default implementation, just forward to internal method
-  this.createJob = function (jobType, data) {
-    this._createJob(jobType, data);
   };
 });

@@ -2,8 +2,7 @@ import _ from 'lodash';
 import stampit from 'stampit';
 import Revenue from '../../models/revenue';
 import funnelRunner from '../lib/funnelRunner';
-import progressJobCreator from '../lib/progressJobCreator';
-import progressJob from '../lib/progressJob';
+import jobProducer from '../lib/jobProducer';
 
 
 let revenueRunner = stampit().enclose(function() {
@@ -52,4 +51,4 @@ let revenueRunner = stampit().enclose(function() {
   };
 });
 
-export default stampit.compose(progressJobCreator, progressJob, funnelRunner, revenueRunner);
+export default stampit.compose(funnelRunner, revenueRunner, jobProducer);

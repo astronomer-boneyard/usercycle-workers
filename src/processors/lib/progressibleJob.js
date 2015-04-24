@@ -6,6 +6,8 @@ import View from '../../models/view';
 //
 export default stampit().enclose(function() {
   this.onComplete(function() {
-    View.incCompleteProgress(this.job.data.viewId);
+    if (!this.job.data.refresh) {
+      View.incCompleteProgress(this.job.data.viewId);
+    }
   });
 });

@@ -14,6 +14,7 @@ import config from 'config';
 import mongoose from 'mongoose';
 import kue from 'kue';
 import queue from './lib/queue';
+import cleanup from './lib/cleanup';
 import * as processors from './processors/index';
 
 
@@ -21,14 +22,20 @@ import * as processors from './processors/index';
 function runtest() {
   // console.log('Pushing test jobs...');
 
-  // queue.create('refreshRetentionBuilder', {
+  // queue.create('retentionBuilder', {
   //   viewId: 'fzGirKkNGLKpaBmZT'
   // }).removeOnComplete(true).save();
   //
-  queue.create('refreshRetentionBuilder', {
-    // viewId: 'kYjBZRX8myih4fJCb'
-    viewId: '5ZZsnBe8yPGH7gZxs',
-  }).removeOnComplete(true).save();
+  // queue.create('retentionBuilder', {
+  //   refresh: true,
+  //   viewId: 'kYjBZRX8myih4fJCb'
+  //   // viewId: '5ZZsnBe8yPGH7gZxs',
+  // }).removeOnComplete(true).save();
+
+  // queue.create('revenueBuilder', {
+  //   refresh: true,
+  //   viewId: 'E223mSWXtWd9Yyir2'
+  // }).removeOnComplete(true).save();
 
   // ['kYjBZRX8myih4fJCb',
   // 'fzGirKkNGLKpaBmZT',
@@ -39,6 +46,18 @@ function runtest() {
   // });
 }
 
+let server;
+let connection;
+
+cleanup(function() {
+  if (server) {
+    server.close();
+  }
+  if (connection) {
+    connection.close();
+  }
+  queue.shutdown();
+});
 
 
 if (cluster.isMaster) {
@@ -46,10 +65,12 @@ if (cluster.isMaster) {
 
   // MASTER --------------------------------------------------
   // Start GUI server
-  let server = kue.app.listen(8080);
+  server = kue.app.listen(8080);
 
   // XXX: Deprecated soon, but required on master for now
   queue.promote(1000, 1000);
+
+  queue.watchStuckJobs();
 
   // Start worker processes
   for (let i = 0; i < os.cpus().length; i++) {
@@ -63,11 +84,7 @@ if (cluster.isMaster) {
 
   let connection = mongoose.connection
   connection.once('open', () => {
-    console.log('Successfully connected to mongo, starting processors.');
+    console.log(`PID ${process.pid} successfully connected to mongo, starting processors.`);
     processors.start();
-  });
-
-  process.once('SIGTERM', function(sig) {
-    connection.close();
   });
 }

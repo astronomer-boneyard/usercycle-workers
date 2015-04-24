@@ -1,11 +1,9 @@
 import _ from 'lodash';
 import stampit from 'stampit';
 import util from '../../lib/util';
-import progressJobCreator from '../lib/progressJobCreator';
 import funnelBuilder from '../lib/funnelBuilder';
 
-let revenueBuilder = stampit().enclose(function(job, done) {
-
+let revenueBuilder = stampit().enclose(function() {
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     let steps = [];
 
@@ -28,9 +26,10 @@ let revenueBuilder = stampit().enclose(function(job, done) {
       });
     });
 
-    this.createJob('revenueQueryRunner', {
+    this.createJob('revenueRunner', {
       title: `Revenue query - ${view.project.name}: ${view.name}`,
       viewId: view._id,
+      refresh: !!this.job.data.refresh,
       cohortInterval,
       steps
     });
@@ -38,4 +37,4 @@ let revenueBuilder = stampit().enclose(function(job, done) {
   }
 });
 
-export default stampit.compose(progressJobCreator, funnelBuilder, revenueBuilder);
+export default stampit.compose(funnelBuilder, revenueBuilder);

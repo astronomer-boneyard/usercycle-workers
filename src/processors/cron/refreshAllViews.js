@@ -7,7 +7,7 @@ export default stampit().enclose(function() {
 
   let createRefreshBuilderJob = function(jobType, viewId) {
     let title = `Refresh view - ${jobType}`;
-    queue.create(jobType, {viewId, title})
+    queue.create(jobType, {viewId, title, refresh: true})
       .removeOnComplete(true)
       .attempts(5)
       .backoff({delay: 60*1000, type:'exponential'})

@@ -4,10 +4,12 @@ import {QueryRunner, Keen} from '../../datasources/keen';
 import View from '../../models/view';
 import Project from '../../models/project';
 import viewErrorHandler from './viewErrorHandler';
+import delayableJob from './delayableJob';
+import progressibleJob from './progressibleJob';
+import updateLastModifiedDateJob from './updateLastModifiedDateJob';
 
 
 let funnelRunner = stampit().enclose(function() {
-
   // Handle a single response, typically transformation and persisting to our db
   this.handleResponse = function(response) {
     throw new Error('handleResponse not implemented!');
@@ -29,4 +31,10 @@ let funnelRunner = stampit().enclose(function() {
   }
 });
 
-export default stampit.compose(funnelRunner, viewErrorHandler);
+export default stampit.compose(
+  funnelRunner,
+  viewErrorHandler,
+  delayableJob,
+  progressibleJob,
+  updateLastModifiedDateJob
+);

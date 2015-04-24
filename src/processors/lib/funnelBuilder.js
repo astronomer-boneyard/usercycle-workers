@@ -4,12 +4,14 @@ import moment from 'moment';
 import util from '../../lib/util';
 import View from '../../models/view';
 import Project from '../../models/project';
+import delayableJob from './delayableJob';
 import viewErrorHandler from './viewErrorHandler';
+import jobProducer from './jobProducer';
+
 
 //
 // Main funnel query builder
 // Overridable: {Required} pushQuery()
-//              {Required} getIntervalCount()
 //
 let funnelBuilder = stampit().enclose(function() {
 
@@ -74,7 +76,13 @@ let funnelBuilder = stampit().enclose(function() {
 
 
   this.getIntervalCount = function(view, queryableIntervalsLimit, cohortInterval) {
-    throw new Error('getIntervalCount not implemented!');
+    let lastModified = view.lastModified;
+    if (this.job.data.refresh && lastModified) {
+      lastModified = moment.utc(lastModified).startOf(cohortInterval);
+      return moment.utc().diff(lastModified, `${cohortInterval}s`);
+    } else {
+      return queryableIntervalsLimit;
+    }
   };
 
 
@@ -85,4 +93,9 @@ let funnelBuilder = stampit().enclose(function() {
 });
 
 
-export default stampit.compose(funnelBuilder, viewErrorHandler);
+export default stampit.compose(
+  funnelBuilder,
+  viewErrorHandler,
+  delayableJob,
+  jobProducer
+);
