@@ -9,68 +9,52 @@ import 'babel/polyfill';
 import 'promise.prototype.finally';
 
 import os from 'os';
+import express from 'express';
+import bodyParser from 'body-parser';
 import cluster from 'cluster';
 import config from 'config';
 import mongoose from 'mongoose';
 import kue from 'kue';
 import queue from './lib/queue';
-import cleanup from './lib/cleanup';
 import * as processors from './processors/index';
 
 
-// TESTING ---------------------------------------------------------------------
-function runtest() {
-  // console.log('Pushing test jobs...');
+function listen() {
+  // Start GUI uiServer
+  kue.app.listen(8080);
 
-  // queue.create('retentionBuilder', {
-  //   viewId: 'fzGirKkNGLKpaBmZT'
-  // }).removeOnComplete(true).save();
-  //
-  // queue.create('retentionBuilder', {
-  //   refresh: true,
-  //   viewId: 'kYjBZRX8myih4fJCb'
-  //   // viewId: '5ZZsnBe8yPGH7gZxs',
-  // }).removeOnComplete(true).save();
-
-  // queue.create('revenueBuilder', {
-  //   refresh: true,
-  //   viewId: 'E223mSWXtWd9Yyir2'
-  // }).removeOnComplete(true).save();
-
-  // ['kYjBZRX8myih4fJCb',
-  // 'fzGirKkNGLKpaBmZT',
-  // 'carMscSqEZ7XupbL8'].forEach((id) => {
-  //   queue.create('retentionQueryBuilder', {
-  //     viewId: id
-  //   }).removeOnComplete(true).save();
-  // });
+  // Start modulus event listener server
+  let modServer = express();
+  modServer.use(bodyParser.urlencoded({ extended: true }));
+  modServer.post('/', function(req, res) {
+    queue.shutdown(function(err) {
+      console.log('Kue shutdown: ', err||'OK');
+    }, 5000);
+  });
+  modServer.listen(63002);
 }
 
-let server;
-let connection;
 
-cleanup(function() {
-  if (server) {
-    server.close();
+function cleanup() {
+  if (process.env.NODE_ENV === 'development') {
+    queue.active(function(err, ids) {
+      ids.forEach(function(id) {
+        kue.Job.get(id, function(err, job) {
+          job.inactive();
+        });
+      });
+    });
   }
-  if (connection) {
-    connection.close();
-  }
-  queue.shutdown();
-});
+}
 
 
+// STARTUP
 if (cluster.isMaster) {
-  runtest();
-
-  // MASTER --------------------------------------------------
-  // Start GUI server
-  server = kue.app.listen(8080);
+  cleanup();
+  listen();
 
   // XXX: Deprecated soon, but required on master for now
   queue.promote(1000, 1000);
-
-  queue.watchStuckJobs();
 
   // Start worker processes
   for (let i = 0; i < os.cpus().length; i++) {
@@ -78,7 +62,6 @@ if (cluster.isMaster) {
   }
 } else {
 
-  // WORKER --------------------------------------------------
   // Connect to mongo then start processing jobs
   mongoose.connect(config.get('MONGO_URL'));
 

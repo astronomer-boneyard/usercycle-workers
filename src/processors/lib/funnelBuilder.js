@@ -23,7 +23,7 @@ let funnelBuilder = stampit().enclose(function() {
 
     yield view.ensureZeroProgress();
 
-    yield _.map(['month'], (cohortInterval) => {
+    yield _.map(util.INTERVALS, (cohortInterval) => {
       return this.generateForInterval(view, cohortInterval);
     });
 

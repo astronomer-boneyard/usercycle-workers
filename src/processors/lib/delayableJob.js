@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import stampit from 'stampit';
+import luaManager from '../../lib/luaManager';
 import redis from '../../lib/redis';
+
 
 //
 // Mixin for rate limiting a job
@@ -8,14 +10,17 @@ import redis from '../../lib/redis';
 export default stampit().enclose(function() {
 
   let key = `count:${this.job.data.viewId}`;
-  let expire = 120;
+  let allowed = false;
 
   this.onBefore(function*() {
-    let response = yield redis.multi().incr(key).expire(key, expire).exec();
-    return response[0] > 5;
+    let response = yield luaManager.run('inc', [key], []);
+    allowed = !!response;
+    return !allowed;
   });
 
   this.onAfter(function() {
-    redis.multi().decr(key).expire(key, expire).exec();
+    if (allowed) {
+      redis.decr(key).exec();
+    }
   });
 });
