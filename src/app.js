@@ -16,6 +16,7 @@ import config from 'config';
 import mongoose from 'mongoose';
 import kue from 'kue';
 import queue from './lib/queue';
+import luaManager from './lib/luaManager';
 import * as processors from './processors/index';
 
 
@@ -37,7 +38,12 @@ function listen() {
 
 function cleanup() {
   if (process.env.NODE_ENV === 'development') {
+    luaManager.run('del', ['count:*']).then((count) => {
+      console.log(`Reset ${count} counts`);
+    });
+    
     queue.active(function(err, ids) {
+      console.log(`Requeuing ${ids.length} jobs`)
       ids.forEach(function(id) {
         kue.Job.get(id, function(err, job) {
           job.inactive();
@@ -69,5 +75,8 @@ if (cluster.isMaster) {
   connection.once('open', () => {
     console.log(`PID ${process.pid} successfully connected to mongo, starting processors.`);
     processors.start();
+  });
+  connection.once('error', () => {
+    console.error("Could not connect to mongo.  Is it running?")
   });
 }

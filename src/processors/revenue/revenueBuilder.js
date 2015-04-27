@@ -2,8 +2,13 @@ import _ from 'lodash';
 import stampit from 'stampit';
 import util from '../../lib/util';
 import funnelBuilder from '../lib/funnelBuilder';
+import Revenue from '../../models/retention';
 
 let revenueBuilder = stampit().enclose(function() {
+  this.onBefore(function*() {
+    yield Revenue.remove({ viewId: this.job.data.viewId });
+  });
+
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     let steps = [];
 

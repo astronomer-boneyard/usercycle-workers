@@ -43,7 +43,7 @@ function createHandler(factory) {
 
     // Handle errors when running a job
     let onError = function(error) {
-      console.error('\n\n', `An error occured processing job #${job.id} - ${job.type}\n`, error);
+      console.error('\n', `An error occured processing job #${job.id} - ${job.type}\n`, error);
       done(new Error(`${error.name} - ${error.message}`));
       processor.runOnError(error, job);
     };

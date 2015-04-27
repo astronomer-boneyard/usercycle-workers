@@ -2,8 +2,13 @@ import _ from 'lodash';
 import stampit from 'stampit';
 import util from '../../lib/util';
 import funnelBuilder from '../lib/funnelBuilder';
+import Retention from '../../models/retention';
 
 let retentionBuilder = stampit().enclose(function() {
+  this.onBefore(function*() {
+    yield Retention.remove({ viewId: this.job.data.viewId });
+  });
+
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
     let steps = [];
 

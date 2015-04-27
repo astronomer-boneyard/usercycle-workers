@@ -21,11 +21,11 @@ export default stampit().enclose(function() {
     let views = yield View.find({type: type, locked: { $ne: true}}).exec();
     views.forEach((view) => {
       if (type === 'retention') {
-        createRefreshBuilderJob('refreshRetentionBuilder', view._id);
+        createRefreshBuilderJob('retentionBuilder', view._id);
       } else if (type === 'revenue') {
-        createRefreshBuilderJob('refreshRevenueBuilder', view._id);
+        createRefreshBuilderJob('revenueBuilder', view._id);
       } else if (type === 'behaviorFlow') {
-        createRefreshBuilderJob('refreshBehaviorFlowBuilder', view._id);
+        createRefreshBuilderJob('behaviorFlowBuilder', view._id);
       }
     });
 
