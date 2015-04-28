@@ -16,7 +16,7 @@ import jobProducer from './jobProducer';
 let funnelBuilder = stampit().enclose(function() {
 
   this.process = function* () {
-    let {viewId, cohortInterval} = this.job.data;
+    let {viewId} = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
     if (!view) return this.done(new Error('View does not exist'));

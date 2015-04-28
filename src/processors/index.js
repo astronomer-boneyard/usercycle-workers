@@ -7,14 +7,17 @@ import jobLifecycle from './lib/jobLifecycle';
 import summaryEmail from './emails/summaryEmail';
 import retentionBuilder from './retention/retentionBuilder';
 import retentionRunner from './retention/retentionRunner';
+import retentionPruner from './retention/retentionPruner';
 import revenueBuilder from './revenue/revenueBuilder';
 import revenueRunner from './revenue/revenueRunner';
 import revenueSum from './revenue/revenueSum';
+import revenuePruner from './revenue/revenuePruner';
 import behaviorFlowBuilder from './behaviorFlow/behaviorFlowBuilder';
 import behaviorFlowRunner from './behaviorFlow/behaviorFlowRunner';
 import behaviorFlowDropoffs from './behaviorFlow/behaviorFlowDropoffs';
+import behaviorFlowPruner from './behaviorFlow/behaviorFlowPruner';
 import refreshAllViews from './cron/refreshAllViews';
-
+import pruneAllViews from './cron/pruneAllViews';
 
 // Start kue processors, with the function returned by `createHandler`
 export function start(queue) {
@@ -23,16 +26,20 @@ export function start(queue) {
   // Retention
   startProcessing('retentionBuilder', createHandler(retentionBuilder));
   startProcessing('retentionRunner', createHandler(retentionRunner));
+  startProcessing('retentionPruner', createHandler(retentionPruner));
   // Revenue
   startProcessing('revenueBuilder', createHandler(revenueBuilder));
   startProcessing('revenueRunner', createHandler(revenueRunner));
   startProcessing('revenueSum', createHandler(revenueSum));
+  startProcessing('revenuePruner', createHandler(revenuePruner));
   // Behavior Flow
   startProcessing('behaviorFlowBuilder', createHandler(behaviorFlowBuilder));
   startProcessing('behaviorFlowRunner', createHandler(behaviorFlowRunner));
   startProcessing('behaviorFlowDropoffs', createHandler(behaviorFlowDropoffs));
-  // Refresh
+  startProcessing('behaviorFlowPruner', createHandler(behaviorFlowPruner));
+  // Cron
   startProcessing('refreshAllViews', createHandler(refreshAllViews));
+  startProcessing('pruneAllViews', createHandler(pruneAllViews));
 }
 
 
@@ -47,7 +54,7 @@ function createHandler(factory) {
   factory = stampit.compose(jobLifecycle, factory);
 
   // This function serves as a generic handler
-  // It is in charge of creating a new handler and passing the job
+  // It is in charge of creating a new processor and passing the job
   return function(job, done) {
     // Produce a new instance from factory
     let processor = factory.create({job, done});
@@ -67,7 +74,7 @@ function createHandler(factory) {
         // Upon successful completion of process, run any onComplete functions
         processor.runOnComplete();
       } else {
-        // We cannot process this job, kill it and enqueue a duplicate
+        // We cannot process this job, kill it and schedule a duplicate
         done();
         queue.create(job.type, job.data)
           .delay(Math.floor((Math.random() * 30) + 5) * 1000) // Random 5 - 30 sec

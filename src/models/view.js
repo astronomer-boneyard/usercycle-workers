@@ -42,6 +42,7 @@ let instanceMethods = {
   },
 
   firstTimestamp: function* (collection) {
+    // XXX: This on demand dosn't seem to be working?
     if (!this.populated('project')) {
       yield this.populate('project').execPopulate();
     }
