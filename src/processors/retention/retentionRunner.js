@@ -16,7 +16,7 @@ let retentionRunner = stampit().enclose(function() {
     let selector = { viewId, cohortInterval, cohortDate, measurementDate };
     let modifier = { $set: {cohortSize, measurementValue} };
 
-    yield Retention.update(selector, modifier, {upsert: true});
+    yield Retention.update(selector, modifier, {upsert: true}).exec();
   };
 });
 

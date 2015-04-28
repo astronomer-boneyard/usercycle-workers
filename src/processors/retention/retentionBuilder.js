@@ -6,7 +6,7 @@ import Retention from '../../models/retention';
 
 let retentionBuilder = stampit().enclose(function() {
   this.onBefore(function*() {
-    yield Retention.remove({ viewId: this.job.data.viewId });
+    yield Retention.remove({ viewId: this.job.data.viewId }).exec();
   });
 
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {

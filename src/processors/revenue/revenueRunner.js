@@ -19,7 +19,7 @@ let revenueRunner = stampit().enclose(function() {
     let selector = { viewId, cohortInterval, cohortDate, measurementDate };
     let modifier = { $set: {cohortSize, measurementValue} };
 
-    yield Revenue.update(selector, modifier, {upsert: true});
+    yield Revenue.update(selector, modifier, {upsert: true}).exec();
 
     _.each(view.end.events, (ev, i) => {
       let revActors = _.compact(_.difference(actors[0], actors[actors.length-1]));

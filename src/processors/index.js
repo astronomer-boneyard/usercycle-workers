@@ -10,17 +10,28 @@ import retentionRunner from './retention/retentionRunner';
 import revenueBuilder from './revenue/revenueBuilder';
 import revenueRunner from './revenue/revenueRunner';
 import revenueSum from './revenue/revenueSum';
+import behaviorFlowBuilder from './behaviorFlow/behaviorFlowBuilder';
+import behaviorFlowRunner from './behaviorFlow/behaviorFlowRunner';
+import behaviorFlowDropoffs from './behaviorFlow/behaviorFlowDropoffs';
 import refreshAllViews from './cron/refreshAllViews';
 
 
 // Start kue processors, with the function returned by `createHandler`
 export function start(queue) {
+  // Emails
   startProcessing('summaryEmail', createHandler(summaryEmail));
+  // Retention
   startProcessing('retentionBuilder', createHandler(retentionBuilder));
   startProcessing('retentionRunner', createHandler(retentionRunner));
+  // Revenue
   startProcessing('revenueBuilder', createHandler(revenueBuilder));
   startProcessing('revenueRunner', createHandler(revenueRunner));
   startProcessing('revenueSum', createHandler(revenueSum));
+  // Behavior Flow
+  startProcessing('behaviorFlowBuilder', createHandler(behaviorFlowBuilder));
+  startProcessing('behaviorFlowRunner', createHandler(behaviorFlowRunner));
+  startProcessing('behaviorFlowDropoffs', createHandler(behaviorFlowDropoffs));
+  // Refresh
   startProcessing('refreshAllViews', createHandler(refreshAllViews));
 }
 

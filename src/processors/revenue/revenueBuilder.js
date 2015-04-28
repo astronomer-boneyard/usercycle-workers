@@ -6,7 +6,7 @@ import Revenue from '../../models/retention';
 
 let revenueBuilder = stampit().enclose(function() {
   this.onBefore(function*() {
-    yield Revenue.remove({ viewId: this.job.data.viewId });
+    yield Revenue.remove({ viewId: this.job.data.viewId }).exec();
   });
 
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
