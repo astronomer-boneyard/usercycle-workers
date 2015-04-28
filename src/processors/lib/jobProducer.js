@@ -6,7 +6,7 @@ import View from '../../models/view';
 
 
 //
-// Mixin for controlling progress on views
+// Mixin for producing jobs
 //
 export default stampit().enclose(function() {
   this.createJob = function (jobType, data) {
