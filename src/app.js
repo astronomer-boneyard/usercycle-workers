@@ -22,12 +22,13 @@ import * as processors from './processors/index';
 
 function listen() {
   // Start GUI uiServer
-  kue.app.listen(8080);
+  kue.app.listen(process.env.PORT || 8080);
 
   // Start modulus event listener server
   let modServer = express();
   modServer.use(bodyParser.urlencoded({ extended: true }));
   modServer.post('/', function(req, res) {
+    console.log('Shutdown signal recieved from modulus.');
     queue.shutdown(function(err) {
       console.log('Kue shutdown: ', err||'OK');
     }, 5000);
@@ -41,7 +42,7 @@ function cleanup() {
     luaManager.run('del', ['count:*']).then((count) => {
       console.log(`Reset ${count} counts`);
     });
-    
+
     queue.active(function(err, ids) {
       console.log(`Requeuing ${ids.length} jobs`)
       ids.forEach(function(id) {
