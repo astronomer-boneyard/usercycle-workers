@@ -5,7 +5,7 @@ import redis from '../../lib/redis';
 
 
 //
-// Mixin for rate limiting a job
+// Mixin for throttling a job
 //
 export default stampit().enclose(function() {
 

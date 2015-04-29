@@ -17,19 +17,18 @@ let pruneAllViews = stampit().enclose(function() {
     // naturally decay away if nothing is changed
 
     // Pruning for retention and revenue are per view
-    // XXX: SPECIFY UC HERE TO TEST
     let retention = yield View.find({ type: 'retention' }).populate({path: 'project'}).exec();
     retention.forEach((view) => {
       this.createDelayablePruneJob('retentionPruner', view.project.organizationId, view._id);
     });
 
-    // let revenue = yield View.find({ type: 'revenue' }).populate({path: 'project'}).exec();
-    // revenue.forEach((view) => {
-    //   this.createDelayablePruneJob('revenuePruner', view.project.organizationId, view._id);
-    // });
-    //
+    let revenue = yield View.find({ type: 'revenue' }).populate({path: 'project'}).exec();
+    revenue.forEach((view) => {
+      this.createDelayablePruneJob('revenuePruner', view.project.organizationId, view._id);
+    });
+
     // // Behavior Flow does is not per view
-    // this.createDelayablePruneJob('behaviorFlowPruner');
+    this.createDelayablePruneJob('behaviorFlowPruner');
 
     this.done();
   };

@@ -6,7 +6,7 @@ import View from '../../models/view';
 
 
 //
-// Mixin for producing jobs
+// Mixin for producing throttled jobs
 //
 export default stampit().enclose(function() {
 
