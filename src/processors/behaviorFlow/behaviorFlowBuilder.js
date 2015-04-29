@@ -63,7 +63,6 @@ let behaviorFlowBuilder = stampit().enclose(function() {
       });
 
       this.createJob('behaviorFlowRunner', {
-      // console.log({
         title: `Behavior flow query - ${view.project.name}: ${view.name}`,
         refresh: !!this.job.data.refresh,
         viewId: view._id,
