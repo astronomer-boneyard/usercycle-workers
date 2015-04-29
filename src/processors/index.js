@@ -77,7 +77,7 @@ function createHandler(factory) {
         // We cannot process this job, kill it and schedule a duplicate
         done();
         queue.create(job.type, job.data)
-          .delay(Math.floor((Math.random() * 30) + 5) * 1000) // Random 5 - 30 sec
+          .delay(Math.floor((Math.random() * 45) + 5) * 1000) // Random 5 - 45 sec
           .removeOnComplete(job._removeOnComplete)
           .attempts(job._max_attempts)
           .backoff(job._backoff)
