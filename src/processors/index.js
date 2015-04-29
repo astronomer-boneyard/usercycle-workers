@@ -18,6 +18,7 @@ import behaviorFlowDropoffs from './behaviorFlow/behaviorFlowDropoffs';
 import behaviorFlowPruner from './behaviorFlow/behaviorFlowPruner';
 import refreshAllViews from './cron/refreshAllViews';
 import pruneAllViews from './cron/pruneAllViews';
+import sendSummaryEmails from './cron/sendSummaryEmails';
 
 // Start kue processors, with the function returned by `createHandler`
 export function start(queue) {
@@ -40,6 +41,7 @@ export function start(queue) {
   // Cron
   startProcessing('refreshAllViews', createHandler(refreshAllViews));
   startProcessing('pruneAllViews', createHandler(pruneAllViews));
+  startProcessing('sendSummaryEmails', createHandler(sendSummaryEmails));
 }
 
 

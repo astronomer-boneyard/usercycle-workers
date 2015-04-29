@@ -53,7 +53,14 @@ let instanceMethods = {
     });
 
     let response = yield QueryRunner.run(this.project, min);
-    return response.result;
+    response = response.result;
+
+    // XXX: If response comes back null, just default to now
+    if (!response) {
+      response = moment.utc().format()
+    }
+    
+    return response;
   },
 
   firstStartEvent: function* () {
