@@ -5,7 +5,7 @@ import Random from 'meteor-random';
 import TreeModel from 'tree-model';
 import BehaviorFlow from '../../models/behaviorFlow';
 import funnelRunner from '../lib/funnelRunner';
-import jobProducer from '../lib/jobProducer';
+import delayableJobProducer from '../lib/delayableJobProducer';
 
 
 //
@@ -62,4 +62,4 @@ let behaviorFlowFunnelRunner = stampit().enclose(function() {
 });
 
 
-export default stampit.compose(funnelRunner, behaviorFlowFunnelRunner, jobProducer);
+export default stampit.compose(funnelRunner, behaviorFlowFunnelRunner, delayableJobProducer);

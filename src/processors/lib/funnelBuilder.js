@@ -6,7 +6,7 @@ import View from '../../models/view';
 import Project from '../../models/project';
 import delayableJob from './delayableJob';
 import viewErrorHandler from './viewErrorHandler';
-import jobProducer from './jobProducer';
+import delayableJobProducer from './delayableJobProducer';
 
 
 //
@@ -97,5 +97,5 @@ export default stampit.compose(
   funnelBuilder,
   viewErrorHandler,
   delayableJob,
-  jobProducer
+  delayableJobProducer
 );

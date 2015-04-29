@@ -7,7 +7,7 @@ import util from '../../lib/util';
 import View from '../../models/view';
 import BehaviorFlow from '../../models/behaviorFlow';
 import viewErrorHandler from '../lib/viewErrorHandler';
-import jobProducer from '../lib/jobProducer';
+import delayableJobProducer from '../lib/delayableJobProducer';
 
 
 //
@@ -86,5 +86,5 @@ let behaviorFlowBuilder = stampit().enclose(function() {
 export default stampit.compose(
   behaviorFlowBuilder,
   viewErrorHandler,
-  jobProducer
+  delayableJobProducer
 );
