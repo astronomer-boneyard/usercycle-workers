@@ -2,5 +2,12 @@
   "MONGO_URL": "mongodb://localhost:3001/meteor",
   "APOSTLE_DOMAINKEY": "37b6c7c6a2a7742e2973aa2342ff8cb663eb43cf",
   "REDIS_HOST": "127.0.0.1",
-  "REDIS_PORT": "6379"
+  "REDIS_PORT": "6379",
+  "SLACK": {
+    "urls": {
+      "#useractivity": "https://hooks.slack.com/services/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",
+      "#pm-advisor-signup": "https://hooks.slack.com/services/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",
+      "#first100-signup": "https://hooks.slack.com/services/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"
+    }
+  }
 }

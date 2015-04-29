@@ -19,6 +19,7 @@ import behaviorFlowPruner from './behaviorFlow/behaviorFlowPruner';
 import refreshAllViews from './cron/refreshAllViews';
 import pruneAllViews from './cron/pruneAllViews';
 import sendSummaryEmails from './cron/sendSummaryEmails';
+import slackNotification from './slack/slackNotification';
 
 // Start kue processors, with the function returned by `createHandler`
 export function start(queue) {
@@ -42,6 +43,8 @@ export function start(queue) {
   startProcessing('refreshAllViews', createHandler(refreshAllViews));
   startProcessing('pruneAllViews', createHandler(pruneAllViews));
   startProcessing('sendSummaryEmails', createHandler(sendSummaryEmails));
+  // Slack
+  startProcessing('slackNotification', createHandler(slackNotification));
 }
 
 
