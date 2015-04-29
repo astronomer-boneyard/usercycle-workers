@@ -3,6 +3,7 @@ import stampit from 'stampit';
 import moment from 'moment';
 import Random from 'meteor-random';
 import TreeModel from 'tree-model';
+import queue from '../../lib/queue';
 import BehaviorFlow from '../../models/behaviorFlow';
 import funnelRunner from '../lib/funnelRunner';
 import delayableJobProducer from '../lib/delayableJobProducer';
@@ -51,12 +52,18 @@ let behaviorFlowFunnelRunner = stampit().enclose(function() {
     });
 
     if (funnelsComplete) {
-      this.createJob('behaviorFlowDropoffs', {
+      let data = {
         title: `Behavior flow dropoff - ${view.project.name}: ${view.name}`,
         refresh: !!this.job.data.refresh,
         viewId,
         date
-      });
+      };
+
+      queue.create('behaviorFlowDropoffs', data)
+        .removeOnComplete(true)
+        .attempts(5)
+        .backoff({delay: 60*1000, type:'exponential'})
+        .save();
     }
   };
 });

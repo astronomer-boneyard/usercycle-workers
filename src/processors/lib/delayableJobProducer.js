@@ -9,8 +9,16 @@ import View from '../../models/view';
 // Mixin for producing jobs
 //
 export default stampit().enclose(function() {
-  this.createJob = function (jobType, data) {
-    let key = `delay:${data.viewId}`;
+
+  this.createDelayableJob = function (jobType, throttleKey, data) {
+
+    // Add throttleKey to the job data, for usage by the `delayableJob`
+    data._throttleKey = throttleKey;
+
+    // Create redis key for staggering delays
+    let key = `delay:${throttleKey}`;
+
+    // Command to increment the delay for the current throttleKey -- expires
     let cmd = redis.multi().incrby(key, 1000).expire(key, 120);
 
     // Increment delay in redis, and use the returned value for this jobs delay
@@ -30,5 +38,7 @@ export default stampit().enclose(function() {
           }
         });
     });
+
   };
+
 });

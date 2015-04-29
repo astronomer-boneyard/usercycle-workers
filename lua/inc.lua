@@ -15,7 +15,9 @@ else
   return inc(KEYS[1])
 end
 
-
+--
+-- Use this to inc by n, rather than 1
+--
 -- local function inc(key, val)
 --   local val = redis.pcall("INCRBY", key, val)
 --   redis.pcall("EXPIRE", key, 60)

@@ -2,15 +2,13 @@ import _ from 'lodash';
 import stampit from 'stampit';
 import queue from '../../lib/queue';
 import View from '../../models/view';
+import delayableJobProducer from '../lib/delayableJobProducer';
 
-export default stampit().enclose(function() {
-  let createPruneJob = function(jobType, viewId) {
+let pruneAllViews = stampit().enclose(function() {
+
+  this.createDelayablePruneJob = function(jobType, throttleKey, viewId) {
     let title = `Prune view - ${jobType}`;
-    queue.create(jobType, {viewId, title})
-      .removeOnComplete(true)
-      .attempts(5)
-      .backoff({delay: 60*1000, type:'exponential'})
-      .save();
+    this.createDelayableJob(jobType, throttleKey, {viewId, title});
   };
 
   this.process = function* () {
@@ -20,19 +18,21 @@ export default stampit().enclose(function() {
 
     // Pruning for retention and revenue are per view
     // XXX: SPECIFY UC HERE TO TEST
-    let retention = yield View.find({ type: 'retention' }).exec();
+    let retention = yield View.find({ type: 'retention' }).populate({path: 'project'}).exec();
     retention.forEach((view) => {
-      createPruneJob('retentionPruner', view._id);
+      this.createDelayablePruneJob('retentionPruner', view.project.organizationId, view._id);
     });
 
-    // let revenue = yield View.find({ type: 'revenue' }).exec();
+    // let revenue = yield View.find({ type: 'revenue' }).populate({path: 'project'}).exec();
     // revenue.forEach((view) => {
-    //   createPruneJob('revenuePruner', view._id);
+    //   this.createDelayablePruneJob('revenuePruner', view.project.organizationId, view._id);
     // });
     //
     // // Behavior Flow does is not per view
-    // createPruneJob('behaviorFlowPruner');
+    // this.createDelayablePruneJob('behaviorFlowPruner');
 
     this.done();
   };
 });
+
+export default stampit.compose(pruneAllViews, delayableJobProducer);

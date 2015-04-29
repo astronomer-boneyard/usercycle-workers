@@ -9,7 +9,12 @@ import redis from '../../lib/redis';
 //
 export default stampit().enclose(function() {
 
-  let key = `count:${this.job.data.viewId}`;
+  let throttleKey = this.job.data._throttleKey;
+  if (!throttleKey) {
+    throw new Error('Attempt to use delayable job with no throttleKey');
+  }
+
+  let key = `count:${throttleKey}`;
   let allowed = false;
 
   this.onBefore(function*() {

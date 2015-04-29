@@ -38,7 +38,7 @@ let revenueRunner = stampit().enclose(function() {
           }]
         };
 
-        this.createJob('revenueSum', {
+        this.createDelayableJob('revenueSum', view.project.organizationId, {
           title: `Revenue query - ${view.project.name}: ${view.name}`,
           viewId: view._id,
           cohortInterval,

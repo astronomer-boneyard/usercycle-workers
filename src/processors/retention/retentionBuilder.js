@@ -29,7 +29,7 @@ let retentionBuilder = stampit().enclose(function() {
       });
     });
 
-    this.createJob('retentionRunner', {
+    this.createDelayableJob('retentionRunner', view.project.organizationId, {
       title: `Retention query - ${view.project.name}: ${view.name}`,
       viewId: view._id,
       refresh: !!this.job.data.refresh,

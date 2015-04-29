@@ -62,7 +62,7 @@ let behaviorFlowBuilder = stampit().enclose(function() {
         };
       });
 
-      this.createJob('behaviorFlowRunner', {
+      this.createDelayableJob('behaviorFlowRunner', view.project.organizationId, {
         title: `Behavior flow query - ${view.project.name}: ${view.name}`,
         refresh: !!this.job.data.refresh,
         viewId: view._id,
