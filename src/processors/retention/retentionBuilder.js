@@ -5,8 +5,11 @@ import funnelBuilder from '../lib/funnelBuilder';
 import Retention from '../../models/retention';
 
 let retentionBuilder = stampit().enclose(function() {
+
   this.onBefore(function*() {
-    yield Retention.remove({ viewId: this.job.data.viewId }).exec();
+    if (!this.job.data.refresh) {
+      yield Retention.remove({ viewId: this.job.data.viewId }).exec();
+    }
   });
 
   this.pushQuery = function(view, cohortInterval, cohortStart, cohortEnd, queryStart, queryEnd) {
