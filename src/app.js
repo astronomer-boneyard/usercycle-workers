@@ -70,7 +70,7 @@ if (cluster.isMaster) {
 } else {
 
   // Connect to mongo then start processing jobs
-  mongoose.connect(config.get('MONGO_URL'));
+  mongoose.connect(config.get('mongo_url'));
 
   let connection = mongoose.connection
   connection.once('open', () => {

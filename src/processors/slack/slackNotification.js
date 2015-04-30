@@ -6,7 +6,7 @@ import request from 'request-promise';
 export default stampit().enclose(function() {
 
   this.process = function* () {
-    let uri = config.get('SLACK.urls')[this.job.data.channel];
+    let uri = config.get('slack.urls')[this.job.data.channel];
     yield request({
       method: 'POST',
       uri: uri,
