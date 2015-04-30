@@ -186,7 +186,7 @@ export default stampit().enclose(function(){
     }
 
     emails.send(addresses, 'daily', bundle);
-    console.log(`Summary emails sent for ${view.project.name}`);
+    // console.log(`Summary emails sent for ${view.project.name} - ${view.name}`);
   };
 
 
@@ -196,7 +196,7 @@ export default stampit().enclose(function(){
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
     if (!view) this.done(new Error('View does not exist'));
 
-    console.log(`Creating summary email for ${view.project.name}`);
+    // console.log(`Creating summary email for ${view.project.name} - ${view.name}`);
 
     let bundle = { projectName: view.project.name };
 
