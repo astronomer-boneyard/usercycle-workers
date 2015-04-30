@@ -1,5 +1,6 @@
 {
   "name": "usercycle2-workers",
+  "mod-project-name": "workers",
   "description": "Job processor for usercycle",
   "author": {
     "name": "schnie"
