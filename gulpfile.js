@@ -31,12 +31,12 @@ gulp.task('build', function(cb) {
   runSequence('clean', ['copy', 'babel'], cb);
 })
 
-gulp.task('watch', ['clean', 'copy', 'babel'], function() {
+gulp.task('watch', ['build'], function() {
   nodemon({
     script: settings.dist + '/app.js',
     ext: 'js',
     ignore: [settings.dist + '/*'],
-    tasks: ['clean', 'copy', 'babel'],
+    tasks: ['build'],
     env: {
       'NODE_ENV': 'development'
     }
