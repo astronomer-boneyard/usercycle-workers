@@ -35,7 +35,8 @@
     "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.0.0",
-    "gulp-nodemon": "^2.0.2"
+    "gulp-nodemon": "^2.0.2",
+    "run-sequence": "^1.1.0"
   },
   "scripts": {
     "start": "gulp watch",
