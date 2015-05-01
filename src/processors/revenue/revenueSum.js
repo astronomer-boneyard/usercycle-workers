@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import stampit from 'stampit';
-import {QueryRunner, Keen} from '../../datasources/keen';
+import Keen from '../../datasources/keen';
 import View from '../../models/view';
 import Revenue from '../../models/revenue';
 import progressibleJob from '../lib/progressibleJob';
@@ -16,7 +16,7 @@ let revenueSum = stampit().enclose(function() {
     // console.log(`Running ${cohortInterval} revenue sum for ${view.project.name}`);
 
     let sum = new Keen.Query('sum', query);
-    let response = yield QueryRunner.run(view.project, sum);
+    let response = yield Keen.run(view.project, sum);
 
     let selector = {viewId, cohortInterval, cohortDate, measurementDate};
     let modifier = {$inc: {measurementValue: response.result}};

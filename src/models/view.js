@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import mongoose from 'mongoose';
-import {QueryRunner, Keen} from '../datasources/keen';
+import Keen from '../datasources/keen';
 import moment from 'moment';
 import co from 'co';
 
@@ -52,14 +52,14 @@ let instanceMethods = {
       target_property: 'keen.timestamp'
     });
 
-    let response = yield QueryRunner.run(this.project, min);
+    let response = yield Keen.run(this.project, min);
     response = response.result;
 
     // XXX: If response comes back null, just default to now
     if (!response) {
       response = moment.utc().format()
     }
-    
+
     return response;
   },
 

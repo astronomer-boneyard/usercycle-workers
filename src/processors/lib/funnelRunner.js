@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import stampit from 'stampit';
-import {QueryRunner, Keen} from '../../datasources/keen';
+import Keen from '../../datasources/keen';
 import View from '../../models/view';
 import Project from '../../models/project';
 import viewErrorHandler from './viewErrorHandler';
@@ -25,7 +25,7 @@ let funnelRunner = stampit().enclose(function() {
     // console.log(`Running ${cohortInterval} query for ${view.project.name}`);
 
     let query = new Keen.Query('funnel', {steps});
-    let response = yield QueryRunner.run(view.project, query);
+    let response = yield Keen.run(view.project, query);
     yield this.handleResponse(view, response);
     this.done();
   }

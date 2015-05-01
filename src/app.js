@@ -20,6 +20,12 @@ import luaManager from './lib/luaManager';
 import * as processors from './processors/index';
 
 
+function resetCounts() {
+  luaManager.run('del', ['count:*']).then((count) => {
+    console.log(`Reset ${count} counts`);
+  });
+};
+
 function listen() {
   // Start GUI uiServer
   kue.app.listen(process.env.PORT || 8080);
@@ -29,6 +35,7 @@ function listen() {
   modServer.use(bodyParser.urlencoded({ extended: true }));
   modServer.post('/', function(req, res) {
     console.log('Shutdown signal recieved from modulus.');
+    resetCounts();
     queue.shutdown(function(err) {
       console.log('Kue shutdown: ', err||'OK');
     }, 5000);
@@ -36,13 +43,9 @@ function listen() {
   modServer.listen(63002);
 }
 
-
 function cleanup() {
   if (process.env.NODE_ENV === 'development') {
-    luaManager.run('del', ['count:*']).then((count) => {
-      console.log(`Reset ${count} counts`);
-    });
-
+    resetCounts();
     queue.active(function(err, ids) {
       console.log(`Requeuing ${ids.length} jobs`)
       ids.forEach(function(id) {
@@ -53,7 +56,6 @@ function cleanup() {
     });
   }
 }
-
 
 // STARTUP
 if (cluster.isMaster) {
