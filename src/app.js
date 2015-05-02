@@ -41,17 +41,17 @@ function listen() {
 }
 
 function cleanup() {
-  if (process.env.NODE_ENV === 'development') {
-    resetCounts();
-    queue.active(function(err, ids) {
-      console.log(`Requeuing ${ids.length} jobs`)
-      ids.forEach(function(id) {
-        kue.Job.get(id, function(err, job) {
-          job.inactive();
-        });
+  // if (process.env.NODE_ENV === 'development') {
+  resetCounts();
+  queue.active(function(err, ids) {
+    console.log(`Requeuing ${ids.length} jobs`)
+    ids.forEach(function(id) {
+      kue.Job.get(id, function(err, job) {
+        job.inactive();
       });
     });
-  }
+  });
+  // }
 }
 
 // STARTUP
