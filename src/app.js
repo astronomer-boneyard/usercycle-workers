@@ -27,9 +27,6 @@ function resetCounts() {
 };
 
 function listen() {
-  // Start GUI uiServer
-  kue.app.listen(process.env.PORT || 8080);
-
   // Start modulus event listener server
   let modServer = express();
   modServer.use(bodyParser.urlencoded({ extended: true }));
