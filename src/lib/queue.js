@@ -12,4 +12,8 @@ let queueConfig = {
 
 let queue = kue.createQueue(queueConfig);
 
+queue.on('error', function(e) {
+  console.log('Queue Error: ', e);
+});
+
 export default queue;
