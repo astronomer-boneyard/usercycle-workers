@@ -79,4 +79,12 @@ if (cluster.isMaster) {
   connection.once('error', () => {
     console.error("Could not connect to mongo.  Is it running?")
   });
+
+  process.once('uncaughtException', function(err) {
+    console.error('Something bad happened: ', err);
+    queue.shutdown(1000, function(err2) {
+      console.error('Kue shutdown result: ', err || 'OK' );
+      process.exit(0);
+    });
+  });
 }
