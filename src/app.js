@@ -43,13 +43,21 @@ function listen() {
 function cleanup() {
   // if (process.env.NODE_ENV === 'development') {
   resetCounts();
-  queue.active(function(err, ids) {
-    console.log(`Requeuing ${ids.length} jobs`)
+
+  let delay = function(ids) {
     ids.forEach(function(id) {
       kue.Job.get(id, function(err, job) {
-        job.inactive();
+        job.delayed();
       });
     });
+    console.log(`Requeuing ${ids.length} jobs`)
+  };
+
+  queue.active(function(err, ids) {
+    delay(ids);
+  });
+  queue.inactive(function(err, ids) {
+    delay(ids);
   });
   // }
 }
