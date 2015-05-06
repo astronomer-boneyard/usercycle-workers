@@ -50,15 +50,21 @@ function cleanup() {
         job.delayed();
       });
     });
-    console.log(`Requeuing ${ids.length} jobs`)
+    console.log(`Requeued ${ids.length} jobs`);
   };
 
-  queue.active(function(err, ids) {
-    delay(ids);
-  });
-  queue.inactive(function(err, ids) {
-    delay(ids);
-  });
+  let remove = function(ids) {
+    ids.forEach(function(id) {
+      kue.Job.get(id, function(err, job) {
+        job.remove();
+      });
+    });
+    console.log(`Removed ${ids.length} failed jobs`);
+  };
+
+  queue.active((err, ids) => { delay(ids) });
+  queue.inactive((err, ids) => { delay(ids) });
+  queue.failed((err, ids) => { remove(ids) });
   // }
 }
 
