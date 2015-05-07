@@ -22,7 +22,7 @@ let behaviorFlowBuilder = stampit().enclose(function() {
     let {viewId, date} = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
-    if (!view) return this.done(new Error('View does not exist'));
+    if (!view) throw new Error(`View ${viewId} does not exist`);
 
     yield view.ensureZeroProgress();
 
@@ -46,8 +46,6 @@ let behaviorFlowBuilder = stampit().enclose(function() {
     yield _.map(dates, (date) => {
       return this.generateForDate(view, leaves, date);
     });
-
-    this.done();
   };
 
 

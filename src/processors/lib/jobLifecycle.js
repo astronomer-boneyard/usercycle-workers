@@ -1,6 +1,9 @@
 import _ from 'lodash';
 import stampit from 'stampit';
 
+// Lifecycle callbacks for all processors,
+// mixed in to all jobs prior to invocation of the factory
+
 export default stampit().enclose(function() {
   let onBefore = [], onAfter = [], onComplete = [], onError = [];
 

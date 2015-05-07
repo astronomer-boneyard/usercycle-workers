@@ -20,14 +20,13 @@ let funnelRunner = stampit().enclose(function() {
     let {viewId, cohortInterval, steps} = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
-    if (!view) return this.done(new Error('View does not exist'));
+    if (!view) throw new Error(`View ${viewId} does not exist`);
 
     // console.log(`Running ${cohortInterval} query for ${view.project.name}`);
 
     let query = new Keen.Query('funnel', {steps});
     let response = yield Keen.run(view.project, query);
     yield this.handleResponse(view, response);
-    this.done();
   }
 });
 

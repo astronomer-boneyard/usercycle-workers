@@ -27,6 +27,9 @@ function resetCounts() {
 };
 
 function listen() {
+  // Start GUI Server
+  kue.app.listen(process.env.PORT || 8080);
+
   // Start modulus event listener server
   let modServer = express();
   modServer.use(bodyParser.urlencoded({ extended: true }));
@@ -41,13 +44,14 @@ function listen() {
 }
 
 function cleanup() {
-  // if (process.env.NODE_ENV === 'development') {
   resetCounts();
 
   let delay = function(ids) {
     ids.forEach(function(id) {
       kue.Job.get(id, function(err, job) {
-        job.delayed();
+        if (job) {
+          job.delayed();
+        }
       });
     });
     console.log(`Requeued ${ids.length} jobs`);
@@ -65,16 +69,16 @@ function cleanup() {
   queue.active((err, ids) => { delay(ids) });
   queue.inactive((err, ids) => { delay(ids) });
   queue.failed((err, ids) => { remove(ids) });
-  // }
 }
 
 // STARTUP
 if (cluster.isMaster) {
-  cleanup();
-  listen();
 
-  // XXX: Deprecated soon, but required on master for now
-  queue.promote(1000, 1000);
+  if (process.env.NODE_ENV === 'development') {
+    cleanup();
+  }
+
+  listen();
 
   // Start worker processes
   for (let i = 0; i < os.cpus().length; i++) {

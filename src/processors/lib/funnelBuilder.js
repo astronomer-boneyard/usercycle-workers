@@ -19,7 +19,7 @@ let funnelBuilder = stampit().enclose(function() {
     let {viewId} = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
-    if (!view) return this.done(new Error('View does not exist'));
+    if (!view) throw new Error(`View ${viewId} does not exist`);
 
     if (!this.job.data.refresh) {
       yield view.ensureZeroProgress();
@@ -28,8 +28,6 @@ let funnelBuilder = stampit().enclose(function() {
     yield _.map(util.INTERVALS, (cohortInterval) => {
       return this.generateForInterval(view, cohortInterval);
     });
-
-    this.done();
   };
 
   // Generate queries for a given interval

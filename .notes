@@ -7,3 +7,9 @@ TODO:
 lua scripts
 queue level events - use instead of mixins for progress
 calculate rolling avg time - use to delay jobs
+
+
+ISSUE:
+some jobs execute multiple times, or job with matching data
+only happens with multiple processes
+all jobs that get queued, are required before data is correct

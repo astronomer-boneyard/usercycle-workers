@@ -31,6 +31,7 @@ export default stampit().enclose(function() {
         .delay(delay)
         .attempts(5)
         .backoff({delay: 60*1000, type:'exponential'})
+        .ttl(300000)
         .save((error) => {
           // Increment total progress if its not a refresh
           if (!this.job.data.refresh) {

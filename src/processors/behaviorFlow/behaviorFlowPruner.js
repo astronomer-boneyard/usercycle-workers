@@ -7,6 +7,5 @@ export default stampit().enclose(function() {
   this.process = function* () {
     let cutOff = moment.utc().subtract(7, 'days');
     yield BehaviorFlow.remove({ date: { $lt: cutOff.toDate() } }).exec();
-    this.done();
   };
 });

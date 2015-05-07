@@ -25,8 +25,6 @@ let refreshAllViews = stampit().enclose(function() {
         this.createRefreshBuilderJob('behaviorFlowBuilder', view.project.organizationId, view._id);
       }
     });
-
-    this.done();
   };
 });
 

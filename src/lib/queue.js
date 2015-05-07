@@ -3,6 +3,7 @@ import config from 'config';
 
 // Setup kue
 let queueConfig = {
+  jobEvents: false,
   redis: {
     host: config.get('redis.host'),
     port: config.get('redis.port'),

@@ -17,7 +17,7 @@ let behaviorFlowFunnelRunner = stampit().enclose(function() {
     let {viewId, date, leafIndex} = this.job.data;
 
     let bf = yield BehaviorFlow.findOne({viewId, date}).exec();
-    if (!bf) return this.done(new Error('BehaviorFlow does not exist'));
+    if (!bf) throw new Error('BehaviorFlow does not exist');
 
     let tree = new TreeModel();
     let root = tree.parse(bf.tree.model);
@@ -52,18 +52,12 @@ let behaviorFlowFunnelRunner = stampit().enclose(function() {
     });
 
     if (funnelsComplete) {
-      let data = {
+      this.createDelayableJob('behaviorFlowDropoffs', view.project.organizationId, {
         title: `Behavior flow dropoff - ${view.project.name}: ${view.name}`,
         refresh: !!this.job.data.refresh,
         viewId,
         date
-      };
-
-      queue.create('behaviorFlowDropoffs', data)
-        .removeOnComplete(true)
-        .attempts(5)
-        .backoff({delay: 60*1000, type:'exponential'})
-        .save();
+      });
     }
   };
 });

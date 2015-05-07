@@ -29,8 +29,6 @@ let pruneAllViews = stampit().enclose(function() {
 
     // // Behavior Flow does is not per view
     this.createDelayablePruneJob('behaviorFlowPruner');
-
-    this.done();
   };
 });
 

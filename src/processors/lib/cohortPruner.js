@@ -29,13 +29,11 @@ let cohortPruner = stampit().enclose(function() {
     let { viewId } = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
-    if (!view) return this.done(new Error('View does not exist'));
+    if (!view) throw new Error(`View ${viewId} does not exist`);
 
     yield _.map(util.INTERVALS, (cohortInterval) => {
       return this.pruneForInterval(view, cohortInterval);
     });
-
-    this.done();
   };
 });
 

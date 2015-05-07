@@ -15,7 +15,7 @@ let behaviorFlowDropoffs = stampit().enclose(function() {
     let {viewId, date} = this.job.data;
 
     let bf = yield BehaviorFlow.findOne({viewId, date}).exec();
-    if (!bf) return this.done(new Error('BehaviorFlow does not exist'));
+    if (!bf) throw new Error('BehaviorFlow does not exist');
 
     let tree = new TreeModel();
     let root = tree.parse(bf.tree.model);
@@ -45,8 +45,6 @@ let behaviorFlowDropoffs = stampit().enclose(function() {
     let selector = { viewId, date };
     let modifier = { $set: { 'tree.model': root.model } };
     yield BehaviorFlow.update(selector, modifier).exec();
-
-    this.done();
   }
 });
 

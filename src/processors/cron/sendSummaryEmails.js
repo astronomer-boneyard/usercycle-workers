@@ -17,8 +17,6 @@ let sendSummaryEmails = stampit().enclose(function() {
     views.forEach((view) => {
       this.createSummaryEmailJob(view.project.organizationId, view._id);
     });
-
-    this.done();
   };
 });
 

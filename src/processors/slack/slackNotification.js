@@ -19,6 +19,5 @@ export default stampit().enclose(function() {
         link_names: 1
       }
     });
-    this.done();
   };
 });

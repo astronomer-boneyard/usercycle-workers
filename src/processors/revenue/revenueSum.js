@@ -11,7 +11,7 @@ let revenueSum = stampit().enclose(function() {
     let {viewId, cohortInterval, cohortDate, measurementDate, query} = this.job.data;
 
     let view = yield View.findOne({_id: viewId}).populate({path: 'project'}).exec();
-    if (!view) this.done(new Error('View does not exist'));
+    if (!view) throw new Error(`View ${viewId} does not exist`);
 
     // console.log(`Running ${cohortInterval} revenue sum for ${view.project.name}`);
 
@@ -21,8 +21,6 @@ let revenueSum = stampit().enclose(function() {
     let selector = {viewId, cohortInterval, cohortDate, measurementDate};
     let modifier = {$inc: {measurementValue: response.result}};
     yield Revenue.update(selector, modifier, {upsert: true});
-
-    this.done();
   };
 });
 

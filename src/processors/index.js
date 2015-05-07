@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import co from 'co';
+import moment from 'moment';
 import stampit from 'stampit';
 import queue from '../lib/queue';
+import redis from '../lib/redis';
 import View from '../models/view';
 import jobLifecycle from './lib/jobLifecycle';
 import summaryEmail from './emails/summaryEmail';
@@ -53,14 +55,25 @@ function startProcessing(type, handler) {
 }
 
 
-function createHandler(factory) {
+function requeueJob(job) {
+  queue.create(job.type, job.data)
+    .delay(Math.floor((Math.random() * 45) + 10) * 1000) // Random 10 - 45 sec
+    .removeOnComplete(job._removeOnComplete)
+    .attempts(job._max_attempts)
+    .backoff(job._backoff)
+    .priority(job._priority)
+    .ttl(job._ttl)
+    .save();
+}
 
+
+function createHandler(factory) {
   // Reassign factory - mixin lifecycle management
   factory = stampit.compose(jobLifecycle, factory);
 
   // This function serves as a generic handler
   // It is in charge of creating a new processor and passing the job
-  return function(job, done) {
+  return function(job, ctx, done) {
     // Produce a new instance from factory
     let processor = factory.create({job, done});
 
@@ -80,16 +93,10 @@ function createHandler(factory) {
         processor.runOnComplete();
       } else {
         // We cannot process this job, kill it and schedule a duplicate
-        done();
-        queue.create(job.type, job.data)
-          .delay(Math.floor((Math.random() * 45) + 5) * 1000) // Random 5 - 45 sec
-          .removeOnComplete(job._removeOnComplete)
-          .attempts(job._max_attempts)
-          .backoff(job._backoff)
-          .priority(job._priority)
-          .save();
+        requeueJob(job);
       }
-    }).catch(onError)
+    }).then(done)
+      .catch(onError)
       .finally(processor.runOnAfter);
   }
 }
