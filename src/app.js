@@ -36,9 +36,9 @@ function listen() {
   modServer.post('/', function(req, res) {
     console.log('Shutdown signal recieved from modulus.');
     resetCounts();
-    queue.shutdown(function(err) {
+    queue.shutdown(5000, function(err) {
       console.log('Kue shutdown: ', err||'OK');
-    }, 5000);
+    });
   });
   modServer.listen(63002);
 }
@@ -74,9 +74,9 @@ function cleanup() {
 // STARTUP
 if (cluster.isMaster) {
 
-  if (process.env.NODE_ENV === 'development') {
+  // if (process.env.NODE_ENV === 'development') {
     cleanup();
-  }
+  // }
 
   listen();
 
