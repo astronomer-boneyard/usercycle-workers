@@ -37,10 +37,11 @@ export function start(queue) {
   startProcessing('revenueSum', createHandler(revenueSum));
   startProcessing('revenuePruner', createHandler(revenuePruner));
   // Behavior Flow
-  startProcessing('behaviorFlowBuilder', createHandler(behaviorFlowBuilder));
-  startProcessing('behaviorFlowRunner', createHandler(behaviorFlowRunner));
-  startProcessing('behaviorFlowDropoffs', createHandler(behaviorFlowDropoffs));
-  startProcessing('behaviorFlowPruner', createHandler(behaviorFlowPruner));
+  // *** Behavior Flow is Disabled ***
+  //startProcessing('behaviorFlowBuilder', createHandler(behaviorFlowBuilder));
+  //startProcessing('behaviorFlowRunner', createHandler(behaviorFlowRunner));
+  //startProcessing('behaviorFlowDropoffs', createHandler(behaviorFlowDropoffs));
+  //startProcessing('behaviorFlowPruner', createHandler(behaviorFlowPruner));
   // Cron
   startProcessing('refreshAllViews', createHandler(refreshAllViews));
   startProcessing('pruneAllViews', createHandler(pruneAllViews));

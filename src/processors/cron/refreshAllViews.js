@@ -15,7 +15,7 @@ let refreshAllViews = stampit().enclose(function() {
     let type = this.job.data.type;
 
     // Find views for this type that are not locked out
-    let views = yield View.find({type: type, locked: { $ne: true}}).populate({path: 'project'}).exec();
+    let views = yield View.find({type: type, premium: true, locked: { $ne: true}}).populate({path: 'project'}).exec();
     views.forEach((view) => {
       if (type === 'retention') {
         this.createRefreshBuilderJob('retentionBuilder', view.project.organizationId, view._id);

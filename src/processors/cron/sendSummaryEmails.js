@@ -13,7 +13,7 @@ let sendSummaryEmails = stampit().enclose(function() {
 
   this.process = function* () {
     // Find retention views that are not locked out
-    let views = yield View.find({type: 'retention', locked: { $ne: true } }).populate({path: 'project'}).exec();
+    let views = yield View.find({type: 'retention', premium: true, email: true, locked: { $ne: true } }).populate({path: 'project'}).exec();
     views.forEach((view) => {
       this.createSummaryEmailJob(view.project.organizationId, view._id);
     });
