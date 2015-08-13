@@ -49,7 +49,8 @@ let instanceMethods = {
 
     let min = new Keen.Query('minimum', {
       event_collection: collection,
-      target_property: 'keen.timestamp'
+      target_property: 'keen.timestamp',
+      timeframe: 'this_100_years'
     });
 
     let response = yield Keen.run(this.project, min);
